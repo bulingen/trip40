@@ -1,0 +1,51 @@
+# TODO
+
+## Tech Stack
+- Frontend: React (Vite)
+- Backend/DB/Auth: Supabase (Postgres + Auth + Realtime + Storage)
+- Maps: Google Maps JavaScript API
+- Infra: AWS CDK (CloudFront + S3 + Route 53)
+- CI/CD: GitHub Actions → CDK deploy on push to main
+
+---
+
+## Phase 0 — Pipeline
+- [ ] Scaffold React app (Vite)
+- [ ] CDK stack: S3 bucket + CloudFront distribution + Route 53 alias
+- [ ] GitHub Actions: build → cdk deploy on push to main
+- [ ] Verify: push to main → app live on custom domain
+
+## Phase 1 — Core (showcase suggestions)
+- [ ] Supabase project setup + auth (email/password + Google sign-in)
+- [ ] Invite-only: email allow-list, reject unknown sign-ups
+- [ ] Trip entity + suggestions table in Supabase
+- [ ] Interactive Google Map with markers per suggestion
+- [ ] Side panel / list view, synced with map
+- [ ] Detail view: pitch, images, street view, nearby POIs
+- [ ] Add / edit / delete suggestions
+
+## Phase 2 — Collaborate
+- [ ] Star/vote suggestions
+- [ ] Realtime sync (Supabase Realtime)
+- [ ] Search (full-text across pitch content)
+- [ ] Filter by vote count (grey out low-voted, not hidden)
+- [ ] Comments/discussion per suggestion
+
+## Phase 3 — Decide
+- [ ] Voting rounds with deadlines
+- [ ] Freeze date: no new suggestions after X, voting only
+- [ ] Decision deadline with visible countdown
+- [ ] Notifications: daily digest + manual "notify others" button
+- [ ] Voting results email when round closes
+
+## Phase 4 — Polish
+- [ ] Tags (budget tier, flight time, season, visa, etc.)
+- [ ] Comparison mode: side-by-side 2 suggestions
+- [ ] Bracket tournament (head-to-head elimination)
+
+---
+
+## Notes
+- Scope: keep it small, goal is to narrow down, not expand
+- Custom domain via Route 53 (already owned)
+- Notifications: consider Discord webhook to a private server instead of email — much simpler
