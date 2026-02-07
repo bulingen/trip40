@@ -1,7 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 import { ProtectedRoute } from "./auth/ProtectedRoute";
 import { LoginPage } from "./pages/LoginPage";
-import { HomePage } from "./pages/HomePage";
+import { TripsPage } from "./pages/TripsPage";
+import { TripView } from "./pages/TripView";
 
 export function App() {
   return (
@@ -11,7 +12,15 @@ export function App() {
         path="/"
         element={
           <ProtectedRoute>
-            <HomePage />
+            <TripsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/trips/:id"
+        element={
+          <ProtectedRoute>
+            <TripView />
           </ProtectedRoute>
         }
       />
