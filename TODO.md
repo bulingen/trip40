@@ -10,19 +10,21 @@
 ---
 
 ## Phase 0 — Pipeline
-- [ ] Scaffold React app (Vite)
-- [ ] CDK stack: S3 bucket + CloudFront distribution + Route 53 alias
-- [ ] GitHub Actions: build → cdk deploy on push to main
-- [ ] Verify: push to main → app live on custom domain
+- [x] Scaffold React app (Vite)
+- [x] CDK stack: S3 bucket + CloudFront distribution (no Route 53 yet, using cloudfront.net)
+- [x] GitHub Actions: build → cdk deploy on push to main
+- [x] Verify: push to main → app live on CloudFront
 
 ## Phase 1 — Core (showcase suggestions)
-- [ ] Supabase project setup + auth (email/password + Google sign-in)
-- [ ] Invite-only: email allow-list, reject unknown sign-ups
+- [x] Supabase project setup + auth (email/password)
+- [x] Invite-only: email allow-list, reject unknown sign-ups
 - [ ] Trip entity + suggestions table in Supabase
 - [ ] Interactive Google Map with markers per suggestion
 - [ ] Side panel / list view, synced with map
 - [ ] Detail view: pitch, images, street view, nearby POIs
 - [ ] Add / edit / delete suggestions
+- [ ] Tailwind and DaisyUI
+- [ ] Pretty domain name
 
 ## Phase 2 — Collaborate
 - [ ] Star/vote suggestions
