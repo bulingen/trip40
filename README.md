@@ -6,64 +6,84 @@ Trip planning app for deciding where to go.
 
 - Node.js (via asdf)
 - Docker (`sudo service docker start` in WSL)
-- [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started): `npm install -g supabase`
+- Supabase CLI: `npm install -D supabase` (already in devDependencies)
 
 ## Local development
 
 ```bash
-# Start local Supabase (runs Postgres, Auth, Studio via Docker)
-supabase start
-
-# Install dependencies and start dev server
 npm install
+
+# Start local Supabase (runs Postgres, Auth, Studio via Docker)
+npx supabase start
+
+# Copy the Publishable key from the output and update .env.local:
+# VITE_SUPABASE_ANON_KEY=<key from supabase start>
+
+# Seed the database (first time, or to reset)
+npx supabase db reset
+
+# Start dev server
 npm run dev
 ```
 
-Local Supabase Studio: http://127.0.0.1:54323
-Local Inbucket (email viewer): http://127.0.0.1:54324
-App: http://127.0.0.1:5173
-
-`.env.local` is pre-configured for local Supabase. The local anon key is a well-known test key.
+- App: http://127.0.0.1:5173
+- Supabase Studio: http://127.0.0.1:54323
+- Mailpit (email viewer): http://127.0.0.1:54324
 
 ```bash
 # Stop local Supabase
-supabase stop
+npx supabase stop
 ```
 
 ## Database migrations
 
-Migrations live in `supabase/migrations/`. They are applied automatically on `supabase start` and `supabase db reset`.
+Migrations live in `supabase/migrations/`. Applied automatically on `npx supabase start` and `npx supabase db reset`.
 
 ```bash
 # Reset local DB (reapplies all migrations + seed data)
-supabase db reset
+npx supabase db reset
 
 # Push migrations to remote (production)
-supabase db push
+npx supabase db push
 ```
 
 Seed data for local dev is in `supabase/seed.sql`.
 
 ## Production
 
-### GitHub repo secrets
-
-Set these in GitHub → Settings → Secrets:
-
-| Secret | Value |
-|---|---|
-| `VITE_SUPABASE_URL` | `https://quowluomsplgcnaitzle.supabase.co` |
-| `VITE_SUPABASE_ANON_KEY` | Your Supabase anon key |
-
-### Deploy
-
-Push to `main` triggers GitHub Actions: build app → CDK deploy to S3/CloudFront.
-
-DB migrations are deployed manually via `supabase db push`.
-
 ### First-time setup
 
-1. Bootstrap CDK: `cd deploy && npm ci && npx cdk bootstrap`
-2. Deploy OIDC role: `npx cdk deploy Trip40GitHubActionsRole`
-3. Deploy static site: `npx cdk deploy Trip40StaticSite`
-4. After first deploy, GitHub Actions handles subsequent deploys on push to main.
+1. **CDK** (from `deploy/`):
+   ```bash
+   npm ci
+   npx cdk bootstrap
+   npx cdk deploy Trip40GitHubActionsRole
+   npx cdk deploy Trip40StaticSite
+   ```
+
+2. **Supabase** — link CLI to remote project and push migrations:
+   ```bash
+   npx supabase login
+   npx supabase link --project-ref quowluomsplgcnaitzle
+   npx supabase db push
+   ```
+
+3. **Seed production data** — add allowed emails via Supabase Dashboard → SQL Editor:
+   ```sql
+   insert into public.allowed_emails (email) values
+     ('you@example.com'),
+     ('friend@example.com');
+   ```
+   (Don't use `seed.sql` for production — it's for local dev only.)
+
+4. **GitHub repo secrets** — set in GitHub → Settings → Secrets:
+
+   | Secret | Value |
+   |---|---|
+   | `VITE_SUPABASE_URL` | `https://quowluomsplgcnaitzle.supabase.co` |
+   | `VITE_SUPABASE_ANON_KEY` | Your Supabase publishable key |
+
+### Ongoing deploys
+
+- **App**: push to `main` → GitHub Actions builds + CDK deploys to S3/CloudFront.
+- **DB migrations**: `npx supabase db push` (manual, run when you have new migrations).

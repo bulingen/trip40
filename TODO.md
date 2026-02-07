@@ -16,8 +16,8 @@
 - [x] Verify: push to main → app live on CloudFront
 
 ## Phase 1 — Core (showcase suggestions)
-- [ ] Supabase project setup + auth (email/password + Google sign-in)
-- [ ] Invite-only: email allow-list, reject unknown sign-ups
+- [x] Supabase project setup + auth (email/password)
+- [x] Invite-only: email allow-list, reject unknown sign-ups
 - [ ] Trip entity + suggestions table in Supabase
 - [ ] Interactive Google Map with markers per suggestion
 - [ ] Side panel / list view, synced with map
