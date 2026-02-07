@@ -10,10 +10,10 @@
 ---
 
 ## Phase 0 — Pipeline
-- [ ] Scaffold React app (Vite)
-- [ ] CDK stack: S3 bucket + CloudFront distribution + Route 53 alias
-- [ ] GitHub Actions: build → cdk deploy on push to main
-- [ ] Verify: push to main → app live on custom domain
+- [x] Scaffold React app (Vite)
+- [x] CDK stack: S3 bucket + CloudFront distribution (no Route 53 yet, using cloudfront.net)
+- [x] GitHub Actions: build → cdk deploy on push to main
+- [x] Verify: push to main → app live on CloudFront
 
 ## Phase 1 — Core (showcase suggestions)
 - [ ] Supabase project setup + auth (email/password + Google sign-in)
