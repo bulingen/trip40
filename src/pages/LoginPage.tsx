@@ -19,6 +19,20 @@ export function LoginPage() {
     setError(null);
     setSubmitting(true);
 
+    if (isSignUp) {
+      const { data } = await supabase
+        .from("allowed_emails")
+        .select("email")
+        .eq("email", email.toLowerCase())
+        .single();
+
+      if (!data) {
+        setError("This email is not on the invite list.");
+        setSubmitting(false);
+        return;
+      }
+    }
+
     const { error } = isSignUp
       ? await supabase.auth.signUp({ email, password })
       : await supabase.auth.signInWithPassword({ email, password });
