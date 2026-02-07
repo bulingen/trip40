@@ -9,6 +9,7 @@ export function LoginPage() {
   const [password, setPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   if (loading) return null;
@@ -17,6 +18,7 @@ export function LoginPage() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
+    setMessage(null);
     setSubmitting(true);
 
     if (isSignUp) {
@@ -31,12 +33,18 @@ export function LoginPage() {
         setSubmitting(false);
         return;
       }
+
+      const { error } = await supabase.auth.signUp({ email, password });
+      if (error) {
+        setError(error.message);
+      } else {
+        setMessage("Check your email for a confirmation link.");
+      }
+      setSubmitting(false);
+      return;
     }
 
-    const { error } = isSignUp
-      ? await supabase.auth.signUp({ email, password })
-      : await supabase.auth.signInWithPassword({ email, password });
-
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       setError(error.message);
       setSubmitting(false);
@@ -67,6 +75,7 @@ export function LoginPage() {
           />
         </div>
         {error && <p style={{ color: "red" }}>{error}</p>}
+        {message && <p style={{ color: "green" }}>{message}</p>}
         <button type="submit" disabled={submitting}>
           {isSignUp ? "Sign up" : "Sign in"}
         </button>
