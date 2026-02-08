@@ -21,7 +21,7 @@
 - [x] Trip entity + suggestions table in Supabase
 - [x] Interactive Google Map with markers per suggestion
 - [x] Side panel / list view, synced with map
-- [ ] Detail view: pitch, images, street view, nearby POIs
+- [x] Detail view: pitch, street view, restaurants links
 - [ ] Add / edit / delete suggestions
 - [x] Tailwind and DaisyUI
 - [ ] Pretty domain name
