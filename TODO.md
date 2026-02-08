@@ -18,12 +18,12 @@
 ## Phase 1 — Core (showcase suggestions)
 - [x] Supabase project setup + auth (email/password)
 - [x] Invite-only: email allow-list, reject unknown sign-ups
-- [ ] Trip entity + suggestions table in Supabase
-- [ ] Interactive Google Map with markers per suggestion
-- [ ] Side panel / list view, synced with map
+- [x] Trip entity + suggestions table in Supabase
+- [x] Interactive Google Map with markers per suggestion
+- [x] Side panel / list view, synced with map
 - [ ] Detail view: pitch, images, street view, nearby POIs
 - [ ] Add / edit / delete suggestions
-- [ ] Tailwind and DaisyUI
+- [x] Tailwind and DaisyUI
 - [ ] Pretty domain name
 
 ## Phase 2 — Collaborate

@@ -1,31 +1,41 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
-import { MapPlaceholder } from "../components/MapPlaceholder";
+import { TripMap } from "../components/TripMap";
 import { SuggestionList } from "../components/SuggestionList";
 import { BottomSheet } from "../components/BottomSheet";
+import type { Suggestion } from "../lib/database.types";
 
 interface Trip {
   id: string;
   name: string;
 }
 
+type SuggestionWithProfile = Suggestion & {
+  profiles: { display_name: string } | null;
+};
+
 export function TripView() {
   const { id } = useParams<{ id: string }>();
   const [trip, setTrip] = useState<Trip | null>(null);
+  const [suggestions, setSuggestions] = useState<SuggestionWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!id) return;
-    supabase
-      .from("trips")
-      .select("id, name")
-      .eq("id", id)
-      .single()
-      .then(({ data }) => {
-        setTrip(data);
-        setLoading(false);
-      });
+
+    Promise.all([
+      supabase.from("trips").select("id, name").eq("id", id).single(),
+      supabase
+        .from("suggestions")
+        .select("*, profiles(display_name)")
+        .eq("trip_id", id)
+        .order("created_at", { ascending: false }),
+    ]).then(([tripRes, suggestionsRes]) => {
+      setTrip(tripRes.data);
+      setSuggestions((suggestionsRes.data as SuggestionWithProfile[]) ?? []);
+      setLoading(false);
+    });
   }, [id]);
 
   if (loading) {
@@ -66,18 +76,18 @@ export function TripView() {
         {/* Side panel — desktop only */}
         <aside className="hidden md:flex flex-col w-96 border-r border-base-300 bg-base-100 overflow-y-auto p-4">
           <h2 className="text-lg font-semibold mb-3">Suggestions</h2>
-          <SuggestionList tripId={trip.id} />
+          <SuggestionList suggestions={suggestions} />
         </aside>
 
         {/* Map area */}
         <div className="flex-1">
-          <MapPlaceholder />
+          <TripMap suggestions={suggestions} />
         </div>
 
         {/* Bottom sheet — mobile only */}
         <BottomSheet>
           <h2 className="text-lg font-semibold mb-3">Suggestions</h2>
-          <SuggestionList tripId={trip.id} />
+          <SuggestionList suggestions={suggestions} />
         </BottomSheet>
       </div>
     </div>
