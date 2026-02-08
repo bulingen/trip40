@@ -6,9 +6,11 @@ insert into public.allowed_emails (email) values
   ('test@example.com');
 
 -- Create test user (email: test@example.com, password: password123)
+-- GoTrue requires email_change and email_change_token_new to be non-null (empty string)
 insert into auth.users (
   id, instance_id, aud, role, email, encrypted_password,
-  email_confirmed_at, raw_app_meta_data, raw_user_meta_data,
+  email_confirmed_at, email_change, email_change_token_new,
+  raw_app_meta_data, raw_user_meta_data,
   created_at, updated_at, confirmation_token
 ) values (
   '00000000-0000-0000-0000-000000000001',
@@ -17,6 +19,7 @@ insert into auth.users (
   'test@example.com',
   crypt('password123', gen_salt('bf')),
   now(),
+  '', '',
   '{"provider": "email", "providers": ["email"]}',
   '{}',
   now(), now(), ''
