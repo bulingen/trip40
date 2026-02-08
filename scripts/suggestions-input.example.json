@@ -1,0 +1,14 @@
+[
+  {
+    "title": "Barcelona",
+    "description": "Great food, beaches, and architecture. Sagrada Familia is a must.",
+    "lat": 41.3874,
+    "lng": 2.1686
+  },
+  {
+    "title": "Lisbon",
+    "description": "Affordable, amazing pastéis de nata, and great nightlife.",
+    "lat": 38.7223,
+    "lng": -9.1393
+  }
+]

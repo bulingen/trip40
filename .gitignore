@@ -25,3 +25,6 @@ supabase/.temp/
 
 # jetbrains
 .idea/
+
+# import script input (contains your data)
+scripts/suggestions-input.json

@@ -3,15 +3,16 @@ import type { Suggestion } from "../lib/database.types";
 
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY ?? "";
 
-// Default center: Europe
 const DEFAULT_CENTER = { lat: 45, lng: 15 };
 const DEFAULT_ZOOM = 4;
 
 interface TripMapProps {
   suggestions: Suggestion[];
+  selectedId: string | null;
+  onSelectSuggestion: (id: string) => void;
 }
 
-export function TripMap({ suggestions }: TripMapProps) {
+export function TripMap({ suggestions, selectedId, onSelectSuggestion }: TripMapProps) {
   if (!API_KEY) {
     return (
       <div className="flex items-center justify-center bg-base-300 text-base-content/30 text-2xl font-bold h-full w-full select-none">
@@ -37,8 +38,12 @@ export function TripMap({ suggestions }: TripMapProps) {
             key={s.id}
             position={{ lat: s.lat!, lng: s.lng! }}
             title={s.title}
+            onClick={() => onSelectSuggestion(s.id)}
           >
-            <Pin />
+            <Pin
+              background={selectedId === s.id ? "#0ea5e9" : undefined}
+              borderColor={selectedId === s.id ? "#0284c7" : undefined}
+            />
           </AdvancedMarker>
         ))}
       </Map>

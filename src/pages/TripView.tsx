@@ -20,6 +20,7 @@ export function TripView() {
   const [trip, setTrip] = useState<Trip | null>(null);
   const [suggestions, setSuggestions] = useState<SuggestionWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -57,9 +58,15 @@ export function TripView() {
     );
   }
 
+  const listProps = {
+    suggestions,
+    selectedId,
+    onSelect: setSelectedId,
+    onBack: () => setSelectedId(null),
+  };
+
   return (
     <div className="h-screen flex flex-col">
-      {/* Top bar */}
       <div className="navbar bg-base-100 shadow-sm z-10 shrink-0">
         <div className="flex items-center gap-2">
           <Link to="/" className="btn btn-ghost btn-sm">
@@ -71,23 +78,23 @@ export function TripView() {
         </div>
       </div>
 
-      {/* Main content */}
       <div className="flex-1 flex overflow-hidden relative">
-        {/* Side panel — desktop only */}
         <aside className="hidden md:flex flex-col w-96 border-r border-base-300 bg-base-100 overflow-y-auto p-4">
           <h2 className="text-lg font-semibold mb-3">Suggestions</h2>
-          <SuggestionList suggestions={suggestions} />
+          <SuggestionList {...listProps} />
         </aside>
 
-        {/* Map area */}
         <div className="flex-1">
-          <TripMap suggestions={suggestions} />
+          <TripMap
+            suggestions={suggestions}
+            selectedId={selectedId}
+            onSelectSuggestion={setSelectedId}
+          />
         </div>
 
-        {/* Bottom sheet — mobile only */}
         <BottomSheet>
           <h2 className="text-lg font-semibold mb-3">Suggestions</h2>
-          <SuggestionList suggestions={suggestions} />
+          <SuggestionList {...listProps} />
         </BottomSheet>
       </div>
     </div>

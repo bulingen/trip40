@@ -96,3 +96,22 @@ Seed data for local dev is in `supabase/seed.sql`.
 
 - **App**: push to `main` → GitHub Actions builds + CDK deploys to S3/CloudFront.
 - **DB migrations**: `npx supabase db push` (manual, run when you have new migrations).
+
+### Importing suggestions (e.g. from a text dump)
+
+1. Create `scripts/suggestions-input.json` (see `scripts/suggestions-input.example.json`). Format: `[ { "title": "...", "description": "...", "lat": 41.38, "lng": 2.16 }, ... ]`.
+2. Get your profile id: Supabase Dashboard → Table Editor → profiles → your row → copy id.
+3. Run (use production URL and **service_role** key from Project Settings → API):
+   ```bash
+   SUPABASE_URL=https://quowluomsplgcnaitzle.supabase.co \
+   SUPABASE_SERVICE_ROLE_KEY=your-service-role-key \
+   TRIP_ID=uuid-of-the-trip \
+   CREATED_BY=your-profile-uuid \
+   node scripts/import-suggestions.mjs
+   ```
+
+## Troubleshooting
+
+- **"Database error querying schema" / can't log in**  
+  - **Local:** Restart Supabase so PostgREST picks up schema changes: `npx supabase stop` then `npx supabase start`. If you just ran `db reset`, run `npx supabase start` again.
+  - **Production:** After pushing new migrations, wait a minute or reload the project in the Supabase dashboard; if it persists, check Dashboard → Logs for errors.
