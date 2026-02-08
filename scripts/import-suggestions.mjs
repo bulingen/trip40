@@ -2,18 +2,17 @@
 /**
  * Import suggestions from a JSON file into Supabase (e.g. production).
  *
- * Usage (do not commit .env or suggestions-input.json):
+ * Usage:
  *   SUPABASE_URL=https://xxx.supabase.co \
  *   SUPABASE_SERVICE_ROLE_KEY=your-service-role-key \
  *   TRIP_ID=uuid-of-the-trip \
- *   CREATED_BY=uuid-of-your-profile \
+ *   CREATED_BY=your-profile-uuid \
  *   node scripts/import-suggestions.mjs
  *
- * Get CREATED_BY: Supabase Dashboard → Table Editor → profiles → your row → copy id.
- * Get SUPABASE_SERVICE_ROLE_KEY: Project Settings → API → service_role (secret).
- *
- * Input file: scripts/suggestions-input.json
- * Format: [ { "title": "...", "description": "...", "lat": 41.38, "lng": 2.16 }, ... ]
+ * Input: scripts/suggestions-input.json
+ * Each row: { "title", "description?", "lat?", "lng?", "author_label?" }.
+ * author_label = display name shown as "created by" (e.g. a friend's name before they sign up).
+ * created_by = your profile id (the importer); RLS uses it.
  */
 
 import { createClient } from "@supabase/supabase-js";
@@ -53,7 +52,7 @@ try {
 }
 
 if (!Array.isArray(rows)) {
-  console.error("JSON must be an array of { title, description?, lat?, lng? }");
+  console.error("JSON must be an array of { title, description?, lat?, lng?, author_label? }");
   process.exit(1);
 }
 
@@ -66,6 +65,7 @@ const toInsert = rows.map((r) => ({
   description: r.description ?? "",
   lat: r.lat ?? null,
   lng: r.lng ?? null,
+  author_label: r.author_label ?? null,
 }));
 
 const { data, error } = await supabase.from("suggestions").insert(toInsert).select("id");

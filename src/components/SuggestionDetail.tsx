@@ -37,12 +37,10 @@ export function SuggestionDetail({
 
       <h2 className="text-xl font-bold">{suggestion.title}</h2>
 
-      {suggestion.profiles && (
-        <p className="text-sm opacity-60">
-          {suggestion.profiles.display_name} &middot;{" "}
-          {new Date(suggestion.created_at).toLocaleDateString()}
-        </p>
-      )}
+      <p className="text-sm opacity-60">
+        {suggestion.author_label ?? suggestion.profiles?.display_name ?? "Unknown"} &middot;{" "}
+        {new Date(suggestion.created_at).toLocaleDateString()}
+      </p>
 
       <div className="prose prose-sm max-w-none">
         <p className="whitespace-pre-wrap">{suggestion.description || "—"}</p>

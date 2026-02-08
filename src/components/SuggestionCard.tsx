@@ -41,7 +41,7 @@ export function SuggestionCard({
           <p className="text-sm opacity-70">{truncated}</p>
         )}
         <div className="text-xs opacity-40 mt-1">
-          {suggestion.profiles?.display_name ?? "Unknown"} &middot;{" "}
+          {suggestion.author_label ?? suggestion.profiles?.display_name ?? "Unknown"} &middot;{" "}
           {new Date(suggestion.created_at).toLocaleDateString()}
         </div>
       </div>

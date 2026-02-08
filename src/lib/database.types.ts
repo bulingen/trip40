@@ -84,6 +84,7 @@ export type Database = {
           lat: number | null
           lng: number | null
           created_at: string
+          author_label: string | null
         }
         Insert: {
           id?: string
@@ -94,6 +95,7 @@ export type Database = {
           lat?: number | null
           lng?: number | null
           created_at?: string
+          author_label?: string | null
         }
         Update: {
           id?: string
@@ -104,6 +106,7 @@ export type Database = {
           lat?: number | null
           lng?: number | null
           created_at?: string
+          author_label?: string | null
         }
         Relationships: [
           {
