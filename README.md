@@ -35,6 +35,15 @@ npm run dev
 npx supabase stop
 ```
 
+## TypeScript types
+
+Types are auto-generated from the DB schema into `src/lib/database.types.ts`.
+
+```bash
+# Regenerate after any migration change (requires local Supabase running)
+npm run db:types
+```
+
 ## Database migrations
 
 Migrations live in `supabase/migrations/`. Applied automatically on `npx supabase start` and `npx supabase db reset`.
@@ -85,5 +94,33 @@ Seed data for local dev is in `supabase/seed.sql`.
 
 ### Ongoing deploys
 
-- **App**: push to `main` → GitHub Actions builds + CDK deploys to S3/CloudFront.
-- **DB migrations**: `npx supabase db push` (manual, run when you have new migrations).
+- **App**: push to `main` → GitHub Actions builds + CDK deploys to S3/CloudFront. Live at **https://trip40.bulingen.com** (domain + HTTPS in `deploy/lib/static-site-stack.ts`).
+- **DB migrations**: run manually when you have new migrations (see "Full deployment" below).
+
+### Full deployment and prod DB (order of operations)
+
+1. **Update prod schema** (when you have new migrations):
+   ```bash
+   npx supabase login
+   npx supabase link --project-ref quowluomsplgcnaitzle   # once per machine
+   npx supabase db push
+   ```
+2. **Seed / one-off data** (only when needed):
+   - Allowed emails: Supabase Dashboard → SQL Editor → `insert into public.allowed_emails (email) values ('you@example.com'), ...;`
+   - Suggestions: use `scripts/import-suggestions.mjs` (see "Importing suggestions" below).
+3. **Deploy app**: push to `main` (GitHub Actions runs build + `cdk deploy Trip40StaticSite`). Or locally: `cd deploy && npx cdk deploy Trip40StaticSite --require-approval never`.
+
+
+### Importing suggestions
+
+1. Create the trip in Dashboard (Table Editor → trips); note its id.
+2. `scripts/suggestions-input.json`: `[ { "title", "description?", "lat?", "lng?", "author_label?" }, ... ]`. `author_label` = name shown as author (e.g. a friend before they sign up).
+3. Run with production URL + **service_role** key + `TRIP_ID` + your profile uuid as `CREATED_BY`. See script header.
+
+## Troubleshooting
+
+- **"Database error querying schema" / "Database error finding user" (local)**  
+  1. Do a **full restart** so all containers see the current DB: `npx supabase stop`, then `npx supabase start`, then `npx supabase db reset`. The seed sends `NOTIFY pgrst, 'reload schema'` so PostgREST reloads after migrations; a full stop/start is more reliable.
+  2. If it still fails, check the real error: `docker ps` (note container names), then `docker logs supabase_rest_trip40` and `docker logs supabase_auth_trip40` (names may vary). Fix the cause (e.g. missing extension, bad trigger).
+  3. As a last resort, remove Supabase project data and start clean: `npx supabase stop --no-backup`, then `npx supabase start` and `npx supabase db reset`.
+- **Production:** After pushing new migrations, wait a minute or reload the project in the Supabase dashboard; if it persists, check Dashboard → Logs for errors.
