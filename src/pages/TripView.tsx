@@ -61,13 +61,13 @@ export function TripView() {
     <div className="h-screen flex flex-col">
       {/* Top bar */}
       <div className="navbar bg-base-100 shadow-sm z-10 shrink-0">
-        <div className="flex-none">
+        <div className="flex items-center gap-2">
           <Link to="/" className="btn btn-ghost btn-sm">
             &larr;
           </Link>
-        </div>
-        <div className="flex-1">
-          <span className="text-lg font-bold">{trip.name}</span>
+          <div className="flex-1">
+            <span className="text-lg font-bold">{trip.name}</span>
+          </div>
         </div>
       </div>
 

@@ -26,7 +26,7 @@ export function TripsPage() {
         <div className="flex-1">
           <span className="text-xl font-bold px-4">Trip 40</span>
         </div>
-        <div className="flex-none gap-2 px-4">
+        <div className="flex items-center gap-2 px-4">
           <span className="text-sm opacity-70">
             {session?.user.email}
           </span>
