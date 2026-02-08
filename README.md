@@ -112,6 +112,8 @@ Seed data for local dev is in `supabase/seed.sql`.
 
 ## Troubleshooting
 
-- **"Database error querying schema" / can't log in**  
-  - **Local:** Restart Supabase so PostgREST picks up schema changes: `npx supabase stop` then `npx supabase start`. If you just ran `db reset`, run `npx supabase start` again.
-  - **Production:** After pushing new migrations, wait a minute or reload the project in the Supabase dashboard; if it persists, check Dashboard → Logs for errors.
+- **"Database error querying schema" / "Database error finding user" (local)**  
+  1. Do a **full restart** so all containers see the current DB: `npx supabase stop`, then `npx supabase start`, then `npx supabase db reset`. The seed sends `NOTIFY pgrst, 'reload schema'` so PostgREST reloads after migrations; a full stop/start is more reliable.
+  2. If it still fails, check the real error: `docker ps` (note container names), then `docker logs supabase_rest_trip40` and `docker logs supabase_auth_trip40` (names may vary). Fix the cause (e.g. missing extension, bad trigger).
+  3. As a last resort, remove Supabase project data and start clean: `npx supabase stop --no-backup`, then `npx supabase start` and `npx supabase db reset`.
+- **Production:** After pushing new migrations, wait a minute or reload the project in the Supabase dashboard; if it persists, check Dashboard → Logs for errors.

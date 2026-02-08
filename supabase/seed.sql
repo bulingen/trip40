@@ -51,3 +51,6 @@ insert into public.suggestions (trip_id, created_by, title, description, lat, ln
    'Lisbon', 'Affordable, amazing pastéis de nata, and great nightlife.', 38.7223, -9.1393),
   ('00000000-0000-0000-0000-000000000010', '00000000-0000-0000-0000-000000000001',
    'Split', 'Stunning coastline, Diocletian''s Palace, island hopping nearby.', 43.5081, 16.4402);
+
+-- Force PostgREST to reload schema (fixes "database error querying schema" after reset)
+notify pgrst, 'reload schema';
