@@ -1,4 +1,6 @@
 import type { Suggestion } from "../lib/database.types";
+import { ExternalLinkIcon } from "./ExternalLinkIcon";
+import { LeftChevronIcon } from "./LeftChevronIcon";
 
 type SuggestionWithProfile = Suggestion & {
   profiles?: { display_name: string } | null;
@@ -27,10 +29,10 @@ export function SuggestionDetail({
     <div className="flex flex-col gap-4">
       <button
         type="button"
-        className="btn btn-ghost btn-sm self-start -ml-2"
+        className="btn btn-ghost btn-sm self-start -ml-2 flex items-center gap-2"
         onClick={onBack}
       >
-        &larr; Back to all
+        <LeftChevronIcon /> Back to all
       </button>
 
       <h2 className="text-xl font-bold">{suggestion.title}</h2>
@@ -52,17 +54,19 @@ export function SuggestionDetail({
             href={streetViewUrl(suggestion.lat!, suggestion.lng!)}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn btn-outline btn-sm"
+            className="btn btn-outline btn-sm flex items-center gap-2"
           >
             Street View
+            <ExternalLinkIcon />
           </a>
           <a
             href={restaurantsUrl(suggestion.lat!, suggestion.lng!)}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn btn-outline btn-sm"
+            className="btn btn-outline btn-sm flex items-center gap-2"
           >
             Restaurants nearby
+            <ExternalLinkIcon />
           </a>
         </div>
       )}
