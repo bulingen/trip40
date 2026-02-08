@@ -2,12 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../auth/AuthProvider";
-
-interface Trip {
-  id: string;
-  name: string;
-  created_at: string;
-}
+import type { Trip } from "../lib/database.types";
 
 export function TripsPage() {
   const { session } = useAuth();

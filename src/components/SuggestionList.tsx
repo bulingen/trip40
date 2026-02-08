@@ -1,19 +1,14 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { SuggestionCard } from "./SuggestionCard";
+import type { Suggestion } from "../lib/database.types";
 
-interface Suggestion {
-  id: string;
-  title: string;
-  description: string;
-  lat: number | null;
-  lng: number | null;
-  created_at: string;
+type SuggestionWithProfile = Suggestion & {
   profiles: { display_name: string } | null;
-}
+};
 
 export function SuggestionList({ tripId }: { tripId: string }) {
-  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [suggestions, setSuggestions] = useState<SuggestionWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,7 +18,7 @@ export function SuggestionList({ tripId }: { tripId: string }) {
       .eq("trip_id", tripId)
       .order("created_at", { ascending: false })
       .then(({ data }) => {
-        setSuggestions((data as Suggestion[]) ?? []);
+        setSuggestions((data as SuggestionWithProfile[]) ?? []);
         setLoading(false);
       });
   }, [tripId]);

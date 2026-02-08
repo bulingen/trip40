@@ -35,6 +35,15 @@ npm run dev
 npx supabase stop
 ```
 
+## TypeScript types
+
+Types are auto-generated from the DB schema into `src/lib/database.types.ts`.
+
+```bash
+# Regenerate after any migration change (requires local Supabase running)
+npm run db:types
+```
+
 ## Database migrations
 
 Migrations live in `supabase/migrations/`. Applied automatically on `npx supabase start` and `npx supabase db reset`.

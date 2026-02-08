@@ -1,14 +1,10 @@
-interface Suggestion {
-  id: string;
-  title: string;
-  description: string;
-  lat: number | null;
-  lng: number | null;
-  created_at: string;
-  profiles?: { display_name: string } | null;
-}
+import type { Suggestion } from "../lib/database.types";
 
-export function SuggestionCard({ suggestion }: { suggestion: Suggestion }) {
+type SuggestionWithProfile = Suggestion & {
+  profiles?: { display_name: string } | null;
+};
+
+export function SuggestionCard({ suggestion }: { suggestion: SuggestionWithProfile }) {
   return (
     <div className="card bg-base-100 shadow-sm">
       <div className="card-body p-4">
