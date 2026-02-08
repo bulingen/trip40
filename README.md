@@ -91,6 +91,7 @@ Seed data for local dev is in `supabase/seed.sql`.
    |---|---|
    | `VITE_SUPABASE_URL` | `https://quowluomsplgcnaitzle.supabase.co` |
    | `VITE_SUPABASE_ANON_KEY` | Your Supabase publishable key |
+   | `VITE_GOOGLE_MAPS_API_KEY` | Google Maps JavaScript API key (for prod map) |
 
 ### Ongoing deploys
 
