@@ -24,7 +24,7 @@
 - [x] Detail view: pitch, street view, restaurants links
 - [ ] Add / edit / delete suggestions
 - [x] Tailwind and DaisyUI
-- [ ] Pretty domain name
+- [x] Pretty domain name
 
 ## Phase 2 — Collaborate
 - [ ] Star/vote suggestions
