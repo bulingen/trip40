@@ -94,21 +94,28 @@ Seed data for local dev is in `supabase/seed.sql`.
 
 ### Ongoing deploys
 
-- **App**: push to `main` → GitHub Actions builds + CDK deploys to S3/CloudFront.
-- **DB migrations**: `npx supabase db push` (manual, run when you have new migrations).
+- **App**: push to `main` → GitHub Actions builds + CDK deploys to S3/CloudFront. Live at **https://trip40.bulingen.com** (domain + HTTPS in `deploy/lib/static-site-stack.ts`).
+- **DB migrations**: run manually when you have new migrations (see "Full deployment" below).
 
-### Importing suggestions (e.g. from a text dump)
+### Full deployment and prod DB (order of operations)
 
-1. Create `scripts/suggestions-input.json` (see `scripts/suggestions-input.example.json`). Format: `[ { "title": "...", "description": "...", "lat": 41.38, "lng": 2.16 }, ... ]`.
-2. Get your profile id: Supabase Dashboard → Table Editor → profiles → your row → copy id.
-3. Run (use production URL and **service_role** key from Project Settings → API):
+1. **Update prod schema** (when you have new migrations):
    ```bash
-   SUPABASE_URL=https://quowluomsplgcnaitzle.supabase.co \
-   SUPABASE_SERVICE_ROLE_KEY=your-service-role-key \
-   TRIP_ID=uuid-of-the-trip \
-   CREATED_BY=your-profile-uuid \
-   node scripts/import-suggestions.mjs
+   npx supabase login
+   npx supabase link --project-ref quowluomsplgcnaitzle   # once per machine
+   npx supabase db push
    ```
+2. **Seed / one-off data** (only when needed):
+   - Allowed emails: Supabase Dashboard → SQL Editor → `insert into public.allowed_emails (email) values ('you@example.com'), ...;`
+   - Suggestions: use `scripts/import-suggestions.mjs` (see "Importing suggestions" below).
+3. **Deploy app**: push to `main` (GitHub Actions runs build + `cdk deploy Trip40StaticSite`). Or locally: `cd deploy && npx cdk deploy Trip40StaticSite --require-approval never`.
+
+
+### Importing suggestions
+
+1. Create the trip in Dashboard (Table Editor → trips); note its id.
+2. `scripts/suggestions-input.json`: `[ { "title", "description?", "lat?", "lng?", "author_label?" }, ... ]`. `author_label` = name shown as author (e.g. a friend before they sign up).
+3. Run with production URL + **service_role** key + `TRIP_ID` + your profile uuid as `CREATED_BY`. See script header.
 
 ## Troubleshooting
 
