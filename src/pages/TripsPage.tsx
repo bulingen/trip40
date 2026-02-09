@@ -23,8 +23,9 @@ export function TripsPage() {
   return (
     <div className="min-h-screen bg-base-200">
       <div className="navbar bg-base-100 shadow-sm">
-        <div className="flex-1">
-          <span className="text-xl font-bold px-4">Trip 40</span>
+        <div className="flex-1 flex items-center px-4 gap-2">
+          <span className="text-xl font-bold">Trip</span>
+          <img src="/android-chrome-512x512.png" alt="Trip 40" className="h-8 w-auto" />
         </div>
         <div className="flex items-center gap-2 px-4">
           <span className="text-sm opacity-70">

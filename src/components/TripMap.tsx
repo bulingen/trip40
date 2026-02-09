@@ -8,11 +8,20 @@ const DEFAULT_ZOOM = 4;
 
 interface TripMapProps {
   suggestions: Suggestion[];
-  selectedId: string | null;
-  onSelectSuggestion: (id: string) => void;
+  selectedId?: string | null;
+  onSelectSuggestion?: (id: string) => void;
+  /** Override for single-suggestion view (e.g. detail page) */
+  center?: { lat: number; lng: number };
+  zoom?: number;
 }
 
-export function TripMap({ suggestions, selectedId, onSelectSuggestion }: TripMapProps) {
+export function TripMap({
+  suggestions,
+  selectedId = null,
+  onSelectSuggestion,
+  center,
+  zoom,
+}: TripMapProps) {
   if (!API_KEY) {
     return (
       <div className="flex items-center justify-center bg-base-300 text-base-content/30 text-2xl font-bold h-full w-full select-none">
@@ -22,12 +31,14 @@ export function TripMap({ suggestions, selectedId, onSelectSuggestion }: TripMap
   }
 
   const markers = suggestions.filter((s) => s.lat != null && s.lng != null);
+  const mapCenter = center ?? DEFAULT_CENTER;
+  const mapZoom = zoom ?? DEFAULT_ZOOM;
 
   return (
     <APIProvider apiKey={API_KEY}>
       <Map
-        defaultCenter={DEFAULT_CENTER}
-        defaultZoom={DEFAULT_ZOOM}
+        defaultCenter={mapCenter}
+        defaultZoom={mapZoom}
         gestureHandling="greedy"
         disableDefaultUI={false}
         mapId="trip40-map"
@@ -38,7 +49,7 @@ export function TripMap({ suggestions, selectedId, onSelectSuggestion }: TripMap
             key={s.id}
             position={{ lat: s.lat!, lng: s.lng! }}
             title={s.title}
-            onClick={() => onSelectSuggestion(s.id)}
+            onClick={onSelectSuggestion ? () => onSelectSuggestion(s.id) : undefined}
           >
             <Pin
               background={selectedId === s.id ? "#0ea5e9" : undefined}

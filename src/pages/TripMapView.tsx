@@ -16,7 +16,7 @@ type SuggestionWithProfile = Suggestion & {
   profiles: { display_name: string } | null;
 };
 
-export function TripView() {
+export function TripMapView() {
   const { id } = useParams<{ id: string }>();
   const [trip, setTrip] = useState<Trip | null>(null);
   const [suggestions, setSuggestions] = useState<SuggestionWithProfile[]>([]);
@@ -70,11 +70,11 @@ export function TripView() {
     <div className="h-screen flex flex-col">
       <div className="navbar bg-base-100 shadow-sm z-10 shrink-0">
         <div className="flex items-center gap-2">
-          <Link to="/" className="btn btn-ghost btn-sm flex items-center gap-2">
+          <Link to={`/trips/${id}`} className="btn btn-ghost btn-sm flex items-center gap-2">
             <LeftChevronIcon />
           </Link>
           <div className="flex-1">
-            <span className="text-lg font-bold">{trip.name}</span>
+            <span className="text-lg font-bold">Map view</span>
           </div>
         </div>
       </div>

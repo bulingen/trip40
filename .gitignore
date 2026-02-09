@@ -28,3 +28,8 @@ supabase/.temp/
 
 # import script input (contains your data)
 scripts/suggestions-input.json
+scripts/suggestion-images.json
+scripts/seed-prod.sql
+
+seed-data.md
+unsplash-images.txt
