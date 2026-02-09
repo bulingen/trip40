@@ -22,7 +22,7 @@
 - [x] Interactive Google Map with markers per suggestion
 - [x] Side panel / list view, synced with map
 - [x] Detail view: pitch, street view, restaurants links
-- [ ] Add / edit / delete suggestions
+- [x] Add / edit / delete suggestions
 - [x] Tailwind and DaisyUI
 - [x] Pretty domain name
 - [x] Better presentations, with images at least

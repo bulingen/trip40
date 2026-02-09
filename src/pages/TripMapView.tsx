@@ -64,6 +64,7 @@ export function TripMapView() {
     selectedId,
     onSelect: setSelectedId,
     onBack: () => setSelectedId(null),
+    tripId: id ?? undefined,
   };
 
   return (
@@ -81,7 +82,15 @@ export function TripMapView() {
 
       <div className="flex-1 flex overflow-hidden relative">
         <aside className="hidden md:flex flex-col w-96 border-r border-base-300 bg-base-100 overflow-y-auto p-4">
-          <h2 className="text-lg font-semibold mb-3">Suggestions</h2>
+          <div className="flex items-center justify-between gap-2 mb-3">
+            <h2 className="text-lg font-semibold">Suggestions</h2>
+            <Link
+              to={`/trips/${id}/suggestions/new`}
+              className="btn btn-primary btn-sm"
+            >
+              + Add suggestion
+            </Link>
+          </div>
           <SuggestionList {...listProps} />
         </aside>
 
@@ -94,7 +103,15 @@ export function TripMapView() {
         </div>
 
         <BottomSheet>
-          <h2 className="text-lg font-semibold mb-3">Suggestions</h2>
+          <div className="flex items-center justify-between gap-2 mb-3">
+            <h2 className="text-lg font-semibold">Suggestions</h2>
+            <Link
+              to={`/trips/${id}/suggestions/new`}
+              className="btn btn-primary btn-sm"
+            >
+              + Add suggestion
+            </Link>
+          </div>
           <SuggestionList {...listProps} />
         </BottomSheet>
       </div>

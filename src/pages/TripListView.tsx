@@ -20,23 +20,52 @@ export function TripListView() {
   const [trip, setTrip] = useState<Trip | null>(null);
   const [suggestions, setSuggestions] = useState<SuggestionWithProfile[]>([]);
   const [loading, setLoading] = useState(true);
+  const [myOnly, setMyOnly] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [myDisplayName, setMyDisplayName] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
 
-    Promise.all([
-      supabase.from("trips").select("id, name").eq("id", id).single(),
-      supabase
-        .from("suggestions")
-        .select("*, profiles(display_name)")
-        .eq("trip_id", id)
-        .order("created_at", { ascending: false }),
-    ]).then(([tripRes, suggestionsRes]) => {
+    const load = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setCurrentUserId(user.id);
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("display_name")
+          .eq("id", user.id)
+          .single();
+        setMyDisplayName(
+          profile?.display_name != null ? profile.display_name : null
+        );
+      }
+
+      const [tripRes, suggestionsRes] = await Promise.all([
+        supabase.from("trips").select("id, name").eq("id", id).single(),
+        supabase
+          .from("suggestions")
+          .select("*, profiles(display_name)")
+          .eq("trip_id", id)
+          .order("created_at", { ascending: false }),
+      ]);
       setTrip(tripRes.data);
       setSuggestions((suggestionsRes.data as SuggestionWithProfile[]) ?? []);
       setLoading(false);
-    });
+    };
+
+    void load();
   }, [id]);
+
+  // "My suggestions" = I created them (created_by) OR author_label matches my profile display_name
+  const filteredSuggestions =
+    !myOnly
+      ? suggestions
+      : suggestions.filter((s) => {
+        if (myDisplayName != null && s.author_label === myDisplayName)
+          return true;
+        return false;
+      });
 
   if (loading) {
     return (
@@ -69,12 +98,35 @@ export function TripListView() {
       </div>
 
       <div className="max-w-2xl mx-auto p-6">
-        <h2 className="text-xl font-semibold mb-4">Suggestions</h2>
-        {suggestions.length === 0 ? (
-          <p className="text-base-content/60">No suggestions yet.</p>
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <h2 className="text-xl font-semibold">Suggestions</h2>
+          <div className="flex items-center gap-3">
+            <label className="label cursor-pointer gap-2">
+              <input
+                type="checkbox"
+                className="checkbox checkbox-sm"
+                checked={myOnly}
+                onChange={(e) => setMyOnly(e.target.checked)}
+              />
+              <span className="label-text">Show my suggestions only</span>
+            </label>
+            <Link
+              to={`/trips/${id}/suggestions/new`}
+              className="btn btn-primary btn-sm"
+            >
+              + Add suggestion
+            </Link>
+          </div>
+        </div>
+        {filteredSuggestions.length === 0 ? (
+          <p className="text-base-content/60">
+            {suggestions.length === 0
+              ? "No suggestions yet."
+              : "No suggestions match the filter."}
+          </p>
         ) : (
           <div className="flex flex-col gap-3">
-            {suggestions.map((s) => (
+            {filteredSuggestions.map((s) => (
               <SuggestionCard
                 key={s.id}
                 suggestion={s}
