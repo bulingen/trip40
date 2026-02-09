@@ -59,14 +59,17 @@ insert into public.trips (id, name, owner_id) values
    'Trip 40 - Where to?',
    '00000000-0000-0000-0000-000000000001');
 
--- Test suggestions
-insert into public.suggestions (trip_id, created_by, title, description, lat, lng) values
+-- Test suggestions (main_image_url for local preview)
+insert into public.suggestions (trip_id, created_by, title, description, lat, lng, main_image_url) values
   ('00000000-0000-0000-0000-000000000010', '00000000-0000-0000-0000-000000000001',
-   'Barcelona', 'Great food, beaches, and architecture. Sagrada Familia is a must.', 41.3874, 2.1686),
+   'Barcelona', 'Great food, beaches, and architecture. Sagrada Familia is a must.', 41.3874, 2.1686,
+   'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80'),
   ('00000000-0000-0000-0000-000000000010', '00000000-0000-0000-0000-000000000001',
-   'Lisbon', 'Affordable, amazing pastéis de nata, and great nightlife.', 38.7223, -9.1393),
+   'Lisbon', 'Affordable, amazing pastéis de nata, and great nightlife.', 38.7223, -9.1393,
+   'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80'),
   ('00000000-0000-0000-0000-000000000010', '00000000-0000-0000-0000-000000000001',
-   'Split', 'Stunning coastline, Diocletian''s Palace, island hopping nearby.', 43.5081, 16.4402);
+   'Split', 'Stunning coastline, Diocletian''s Palace, island hopping nearby.', 43.5081, 16.4402,
+   'https://images.unsplash.com/photo-1605649487212-47bdab064df7?w=800&q=80');
 
 -- Force PostgREST to reload schema (fixes "database error querying schema" after reset)
 notify pgrst, 'reload schema';
