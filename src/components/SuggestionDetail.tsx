@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import type { Suggestion } from "../lib/database.types";
 import { ExternalLinkIcon } from "./ExternalLinkIcon";
 import { LeftChevronIcon } from "./LeftChevronIcon";
@@ -38,21 +39,30 @@ function restaurantsUrl(lat: number, lng: number): string {
 export function SuggestionDetail({
   suggestion,
   onBack,
+  editLink,
 }: {
   suggestion: SuggestionWithProfile;
   onBack: () => void;
+  editLink?: string;
 }) {
   const hasCoords = suggestion.lat != null && suggestion.lng != null;
 
   return (
     <div className="flex flex-col gap-4">
-      <button
-        type="button"
-        className="btn btn-ghost btn-sm self-start -ml-2 flex items-center gap-2"
-        onClick={onBack}
-      >
-        <LeftChevronIcon /> Back to all
-      </button>
+      <div className="flex items-center justify-between gap-2 flex-wrap">
+        <button
+          type="button"
+          className="btn btn-ghost btn-sm -ml-2 flex items-center gap-2"
+          onClick={onBack}
+        >
+          <LeftChevronIcon /> Back to all
+        </button>
+        {editLink && (
+          <Link to={editLink} className="btn btn-outline btn-sm">
+            Edit
+          </Link>
+        )}
+      </div>
 
       <h2 className="text-xl font-bold">{suggestion.title}</h2>
 

@@ -6,6 +6,8 @@ import { TripHubPage } from "./pages/TripHubPage";
 import { TripMapView } from "./pages/TripMapView";
 import { TripListView } from "./pages/TripListView";
 import { SuggestionDetailPage } from "./pages/SuggestionDetailPage";
+import { AddSuggestionPage } from "./pages/AddSuggestionPage";
+import { EditSuggestionPage } from "./pages/EditSuggestionPage";
 
 export function App() {
   return (
@@ -40,6 +42,22 @@ export function App() {
         element={
           <ProtectedRoute>
             <TripListView />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/trips/:id/suggestions/new"
+        element={
+          <ProtectedRoute>
+            <AddSuggestionPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/trips/:id/suggestions/:suggestionId/edit"
+        element={
+          <ProtectedRoute>
+            <EditSuggestionPage />
           </ProtectedRoute>
         }
       />

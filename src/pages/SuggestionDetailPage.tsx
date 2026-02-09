@@ -68,6 +68,7 @@ export function SuggestionDetailPage() {
         <SuggestionDetail
           suggestion={suggestion}
           onBack={() => window.history.back()}
+          editLink={tripId ? `/trips/${tripId}/suggestions/${suggestionId}/edit` : undefined}
         />
 
         {hasCoords && (
