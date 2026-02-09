@@ -25,6 +25,8 @@
 - [ ] Add / edit / delete suggestions
 - [x] Tailwind and DaisyUI
 - [x] Pretty domain name
+- [x] Better presentations, with images at least
+
 
 ## Phase 2 — Collaborate
 - [ ] Star/vote suggestions
