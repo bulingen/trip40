@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Suggestion } from "../lib/database.types";
 import { ExternalLinkIcon } from "./ExternalLinkIcon";
 import { LeftChevronIcon } from "./LeftChevronIcon";
@@ -7,6 +8,24 @@ type SuggestionWithProfile = Suggestion & {
 };
 
 const TRUNCATE_LEN = 120;
+
+function SuggestionImage({ url, className }: { url: string; className?: string }) {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <div className="relative w-full max-w-[280px] min-h-[120px]">
+      {!loaded && (
+        <div className="absolute inset-0 animate-pulse rounded-lg bg-base-300" aria-hidden />
+      )}
+      <img
+        src={url}
+        alt=""
+        className={`${className ?? ""} ${!loaded ? "opacity-0" : "opacity-100"} transition-opacity relative`}
+        loading="lazy"
+        onLoad={() => setLoaded(true)}
+      />
+    </div>
+  );
+}
 
 function streetViewUrl(lat: number, lng: number): string {
   return `https://www.google.com/maps?layer=c&cbll=${lat},${lng}`;
@@ -41,6 +60,10 @@ export function SuggestionDetail({
         {suggestion.author_label ?? suggestion.profiles?.display_name ?? "Unknown"} &middot;{" "}
         {new Date(suggestion.created_at).toLocaleDateString()}
       </p>
+
+      {suggestion.main_image_url && (
+        <SuggestionImage url={suggestion.main_image_url} className="rounded-lg object-cover max-h-48 w-full sm:max-w-[280px]" />
+      )}
 
       <div className="prose prose-sm max-w-none">
         <p className="whitespace-pre-wrap">{suggestion.description || "—"}</p>
