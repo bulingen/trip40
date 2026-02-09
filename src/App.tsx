@@ -2,7 +2,10 @@ import { Route, Routes } from "react-router-dom";
 import { ProtectedRoute } from "./auth/ProtectedRoute";
 import { LoginPage } from "./pages/LoginPage";
 import { TripsPage } from "./pages/TripsPage";
-import { TripView } from "./pages/TripView";
+import { TripHubPage } from "./pages/TripHubPage";
+import { TripMapView } from "./pages/TripMapView";
+import { TripListView } from "./pages/TripListView";
+import { SuggestionDetailPage } from "./pages/SuggestionDetailPage";
 
 export function App() {
   return (
@@ -20,7 +23,31 @@ export function App() {
         path="/trips/:id"
         element={
           <ProtectedRoute>
-            <TripView />
+            <TripHubPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/trips/:id/map"
+        element={
+          <ProtectedRoute>
+            <TripMapView />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/trips/:id/list"
+        element={
+          <ProtectedRoute>
+            <TripListView />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/trips/:id/suggestions/:suggestionId"
+        element={
+          <ProtectedRoute>
+            <SuggestionDetailPage />
           </ProtectedRoute>
         }
       />
