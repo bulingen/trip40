@@ -59,13 +59,13 @@ export function TripHubPage() {
       <div className="max-w-lg mx-auto p-6 flex flex-col gap-3">
         <Link
           to={`/trips/${id}/map`}
-          className="btn btn-outline btn-secondary btn-lg w-full justify-start gap-2"
+          className="btn btn-outline btn-primary btn-lg w-full justify-start gap-2"
         >
           Map view
         </Link>
         <Link
           to={`/trips/${id}/list`}
-          className="btn btn-outline btn-secondary btn-lg w-full justify-start gap-2"
+          className="btn btn-outline btn-primary btn-lg w-full justify-start gap-2"
         >
           List view
         </Link>
