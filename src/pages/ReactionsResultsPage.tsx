@@ -14,14 +14,7 @@ interface Trip {
 interface Row {
   suggestion: Suggestion & { title: string };
   average: number;
-  reactions: { user_id: string; display_name: string | null; score: number }[];
-}
-
-function initials(name: string | null): string {
-  if (!name || !name.trim()) return "?";
-  const parts = name.trim().split(/\s+/);
-  if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-  return name.slice(0, 2).toUpperCase();
+  reactions: { user_id: string; score: number }[];
 }
 
 export function ReactionsResultsPage() {
@@ -53,17 +46,10 @@ export function ReactionsResultsPage() {
       ]);
       const suggestions = (suggRes.data ?? []) as (Suggestion & { title: string })[];
       const reactions = (reactionsRes.data ?? []) as { suggestion_id: string; user_id: string; score: number }[];
-      const userIds = [...new Set(reactions.map((r) => r.user_id))];
-      const { data: profiles } = await supabase.from("profiles").select("id, display_name").in("id", userIds);
-      const nameByUser = new Map((profiles ?? []).map((p: { id: string; display_name: string | null }) => [p.id, p.display_name]));
-      const bySuggestion: Record<string, { user_id: string; display_name: string | null; score: number }[]> = {};
+      const bySuggestion: Record<string, { user_id: string; score: number }[]> = {};
       for (const r of reactions) {
         if (!bySuggestion[r.suggestion_id]) bySuggestion[r.suggestion_id] = [];
-        bySuggestion[r.suggestion_id].push({
-          user_id: r.user_id,
-          display_name: nameByUser.get(r.user_id) ?? null,
-          score: r.score,
-        });
+        bySuggestion[r.suggestion_id].push({ user_id: r.user_id, score: r.score });
       }
       const suggestionById = new Map(suggestions.map((s) => [s.id, s]));
       const rowsList: Row[] = suggIds.map((id) => {
@@ -144,19 +130,12 @@ export function ReactionsResultsPage() {
                   <td>
                     <div className="flex flex-wrap gap-1 items-center">
                       {row.reactions.map((r) => (
-                        <span
+                        <img
                           key={r.user_id}
-                          className="flex items-center gap-1"
-                          title={r.display_name ?? undefined}
-                        >
-                          <span className="sm:hidden flex items-center justify-center w-7 h-7 rounded-full bg-base-300 text-xs font-medium">
-                            {initials(r.display_name)}
-                          </span>
-                          <span className="hidden sm:inline text-sm truncate max-w-[120px]">
-                            {r.display_name ?? "—"}
-                          </span>
-                          <img src={getReactionSvgPath(r.score as -1 | 0 | 1 | 2)} alt="" className="w-5 h-5" />
-                        </span>
+                          src={getReactionSvgPath(r.score as -1 | 0 | 1 | 2)}
+                          alt=""
+                          className="w-6 h-6"
+                        />
                       ))}
                     </div>
                   </td>

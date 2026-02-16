@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { LeftChevronIcon } from "../components/LeftChevronIcon";
+import { getReactionSvgPath } from "../lib/reactions";
 import type { ReactionsRound } from "../lib/database.types";
 import type { Suggestion } from "../lib/database.types";
 
@@ -19,7 +20,7 @@ export function ReactionsRoundDetailPage() {
   const [trip, setTrip] = useState<Trip | null>(null);
   const [round, setRound] = useState<ReactionsRound | null>(null);
   const [suggestions, setSuggestions] = useState<SuggestionInRound[]>([]);
-  const [myReactionCount, setMyReactionCount] = useState(0);
+  const [myReactionBySuggestion, setMyReactionBySuggestion] = useState<Record<string, number>>({});
   const [canCreate, setCanCreate] = useState(false);
   const [closing, setClosing] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -49,21 +50,25 @@ export function ReactionsRoundDetailPage() {
         .order("suggestion_id");
       if (cancelled || !rsRows?.length) {
         setSuggestions([]);
-        setMyReactionCount(0);
+        setMyReactionBySuggestion({});
         setLoading(false);
         return;
       }
       const suggIds = rsRows.map((r) => r.suggestion_id);
       const [suggRes, myReactionsRes] = await Promise.all([
         supabase.from("suggestions").select("*, profiles(display_name)").in("id", suggIds),
-        user ? supabase.from("reactions").select("suggestion_id").eq("reactions_round_id", roundId).eq("user_id", user.id) : Promise.resolve({ data: [] }),
+        user ? supabase.from("reactions").select("suggestion_id, score").eq("reactions_round_id", roundId).eq("user_id", user.id) : Promise.resolve({ data: [] }),
       ]);
       if (cancelled) return;
       const suggList = (suggRes.data ?? []) as SuggestionInRound[];
       const orderMap = new Map(suggIds.map((id, i) => [id, i]));
       suggList.sort((a, b) => (orderMap.get(a.id) ?? 0) - (orderMap.get(b.id) ?? 0));
       setSuggestions(suggList);
-      setMyReactionCount(myReactionsRes.data?.length ?? 0);
+      const bySuggestion: Record<string, number> = {};
+      for (const r of myReactionsRes.data ?? []) {
+        bySuggestion[(r as { suggestion_id: string; score: number }).suggestion_id] = (r as { suggestion_id: string; score: number }).score;
+      }
+      setMyReactionBySuggestion(bySuggestion);
       setLoading(false);
     })();
     return () => {
@@ -99,6 +104,7 @@ export function ReactionsRoundDetailPage() {
   }
 
   const suggestionCount = suggestions.length;
+  const myReactionCount = Object.keys(myReactionBySuggestion).length;
   const canViewResults = suggestionCount > 0 && myReactionCount === suggestionCount;
   const incomplete = suggestionCount > 0 && myReactionCount < suggestionCount;
 
@@ -114,10 +120,19 @@ export function ReactionsRoundDetailPage() {
       </div>
 
       <div className="max-w-lg mx-auto p-6 flex flex-col gap-4">
-        <p className="text-sm opacity-70">
-          {myReactionCount}/{suggestionCount} suggestions rated
-          {incomplete && " — rate all to view results"}
-        </p>
+        <div className="flex flex-col gap-1">
+          <div className="flex justify-between text-sm">
+            <span className="opacity-70">
+              {myReactionCount}/{suggestionCount} rated
+              {incomplete && " — rate all to view results"}
+            </span>
+          </div>
+          <progress
+            className="progress progress-primary w-full"
+            value={myReactionCount}
+            max={suggestionCount || 1}
+          />
+        </div>
 
         <div className="flex flex-col gap-2">
           {canViewResults ? (
@@ -143,16 +158,25 @@ export function ReactionsRoundDetailPage() {
 
         <div className="divider">Suggestions</div>
         <ul className="flex flex-col gap-2">
-          {suggestions.map((s) => (
-            <li key={s.id}>
-              <Link
-                to={`/trips/${tripId}/reactions/${roundId}/suggestions/${s.id}`}
-                className="block p-3 rounded-lg bg-base-100 shadow-sm border border-base-300 hover:border-primary/30"
-              >
-                <span className="font-medium">{s.title}</span>
-              </Link>
-            </li>
-          ))}
+          {suggestions.map((s) => {
+            const myScore = myReactionBySuggestion[s.id];
+            const voted = myScore !== undefined;
+            return (
+              <li key={s.id}>
+                <Link
+                  to={`/trips/${tripId}/reactions/${roundId}/suggestions/${s.id}`}
+                  className={`flex items-center justify-between gap-2 p-3 rounded-lg bg-base-100 shadow-sm border border-base-300 hover:border-primary/30 ${voted ? "border-primary/20" : ""}`}
+                >
+                  <span className="font-medium">{s.title}</span>
+                  {voted ? (
+                    <img src={getReactionSvgPath(myScore as -1 | 0 | 1 | 2)} alt="" className="w-6 h-6 shrink-0" title="Your vote" />
+                  ) : (
+                    <span className="text-xs opacity-50 shrink-0">Not rated</span>
+                  )}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </div>
