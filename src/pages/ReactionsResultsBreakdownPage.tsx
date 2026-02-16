@@ -116,7 +116,7 @@ export function ReactionsResultsBreakdownPage() {
             {reactions.map((r) => (
               <li key={r.user_id} className="flex items-center gap-3 p-2 rounded-lg bg-base-100 border border-base-300">
                 <span className="font-medium">{r.display_name ?? "Unknown"}</span>
-                <img src={getReactionSvgPath(r.score as -1 | 0 | 1 | 2)} alt="" className="w-8 h-8" />
+                <img src={getReactionSvgPath(r.score as -1 | 0 | 1 | 2)} alt="" className="w-10 h-10" />
                 <span className="text-sm opacity-70">({r.score})</span>
               </li>
             ))}

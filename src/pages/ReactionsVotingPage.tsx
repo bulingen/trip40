@@ -148,12 +148,12 @@ export function ReactionsVotingPage() {
                 <button
                   key={score}
                   type="button"
-                  className={`btn btn-circle btn-lg ${myScore === score ? "btn-primary" : "btn-outline"}`}
+                  className={`btn btn-circle flex items-center justify-center w-16 h-16 min-w-16 min-h-16 ${myScore === score ? "btn-primary" : "btn-outline"}`}
                   onClick={() => setReaction(score)}
                   disabled={saving}
                   title={`Score ${score}`}
                 >
-                  <img src={getReactionSvgPath(score)} alt="" className="w-8 h-8" />
+                  <img src={getReactionSvgPath(score)} alt="" className="w-14 h-14" />
                 </button>
               ))}
             </div>

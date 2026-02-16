@@ -124,7 +124,7 @@ export function ReactionsResultsPage() {
                   <td>
                     <span className="flex items-center gap-2">
                       <span>{row.average.toFixed(1)}</span>
-                      <img src={getReactionSvgPath(roundedScore)} alt="" className="w-6 h-6" />
+                      <img src={getReactionSvgPath(roundedScore)} alt="" className="w-8 h-8" />
                     </span>
                   </td>
                   <td>
@@ -134,7 +134,7 @@ export function ReactionsResultsPage() {
                           key={r.user_id}
                           src={getReactionSvgPath(r.score as -1 | 0 | 1 | 2)}
                           alt=""
-                          className="w-6 h-6"
+                          className="w-8 h-8"
                         />
                       ))}
                     </div>

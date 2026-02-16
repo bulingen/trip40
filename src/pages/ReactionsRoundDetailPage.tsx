@@ -169,7 +169,7 @@ export function ReactionsRoundDetailPage() {
                 >
                   <span className="font-medium">{s.title}</span>
                   {voted ? (
-                    <img src={getReactionSvgPath(myScore as -1 | 0 | 1 | 2)} alt="" className="w-6 h-6 shrink-0" title="Your vote" />
+                    <img src={getReactionSvgPath(myScore as -1 | 0 | 1 | 2)} alt="" className="w-8 h-8 shrink-0" title="Your vote" />
                   ) : (
                     <span className="text-xs opacity-50 shrink-0">Not rated</span>
                   )}
