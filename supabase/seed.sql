@@ -3,7 +3,8 @@
 
 -- Allowed emails
 insert into public.allowed_emails (email) values
-  ('test@example.com');
+  ('test@example.com'),
+  ('friend@example.com');
 
 -- Create test user (email: test@example.com, password: password123)
 -- GoTrue requires email_change and email_change_token_new to be non-null (empty string)
@@ -51,7 +52,51 @@ insert into auth.identities (
   now(), now(), now()
 );
 
--- Profile is auto-created by the trigger.
+-- Second test user (email: friend@example.com, password: password123)
+insert into auth.users (
+  id, instance_id, aud, role, email, encrypted_password,
+  email_confirmed_at, email_change, email_change_token_new,
+  raw_app_meta_data, raw_user_meta_data,
+  created_at, updated_at, confirmation_token
+) values (
+  '00000000-0000-0000-0000-000000000002',
+  '00000000-0000-0000-0000-000000000000',
+  'authenticated', 'authenticated',
+  'friend@example.com',
+  crypt('password123', gen_salt('bf')),
+  now(),
+  '', '',
+  '{"provider": "email", "providers": ["email"]}',
+  '{"display_name": "Friend"}',
+  now(), now(), ''
+);
+
+update auth.users
+set
+  confirmation_token = coalesce(confirmation_token, ''),
+  recovery_token = coalesce(recovery_token, ''),
+  email_change = coalesce(email_change, ''),
+  email_change_token_new = coalesce(email_change_token_new, ''),
+  email_change_token_current = coalesce(email_change_token_current, ''),
+  phone_change = coalesce(phone_change, ''),
+  phone_change_token = coalesce(phone_change_token, ''),
+  reauthentication_token = coalesce(reauthentication_token, '')
+where id = '00000000-0000-0000-0000-000000000002';
+
+insert into auth.identities (
+  id, user_id, provider_id, identity_data, provider,
+  created_at, updated_at, last_sign_in_at
+) values (
+  '00000000-0000-0000-0000-000000000002',
+  '00000000-0000-0000-0000-000000000002',
+  '00000000-0000-0000-0000-000000000002',
+  '{"sub": "00000000-0000-0000-0000-000000000002", "email": "friend@example.com"}',
+  'email',
+  now(), now(), now()
+);
+
+-- Profiles are auto-created by the trigger; give first user permission to create voting rounds
+update public.profiles set can_create_voting_round = true where id = '00000000-0000-0000-0000-000000000001';
 
 -- Test trip
 insert into public.trips (id, name, owner_id) values
