@@ -32,18 +32,129 @@ export type Database = {
           id: string
           display_name: string
           created_at: string
+          can_create_voting_round: boolean
         }
         Insert: {
           id: string
           display_name: string
           created_at?: string
+          can_create_voting_round?: boolean
         }
         Update: {
           id?: string
           display_name?: string
           created_at?: string
+          can_create_voting_round?: boolean
         }
         Relationships: []
+      }
+      reactions_rounds: {
+        Row: {
+          id: string
+          trip_id: string
+          name: string | null
+          created_at: string
+          is_open: boolean
+        }
+        Insert: {
+          id?: string
+          trip_id: string
+          name?: string | null
+          created_at?: string
+          is_open?: boolean
+        }
+        Update: {
+          id?: string
+          trip_id?: string
+          name?: string | null
+          created_at?: string
+          is_open?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reactions_rounds_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reactions_round_suggestions: {
+        Row: {
+          reactions_round_id: string
+          suggestion_id: string
+        }
+        Insert: {
+          reactions_round_id: string
+          suggestion_id: string
+        }
+        Update: {
+          reactions_round_id?: string
+          suggestion_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reactions_round_suggestions_reactions_round_id_fkey"
+            columns: ["reactions_round_id"]
+            isOneToOne: false
+            referencedRelation: "reactions_rounds"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reactions_round_suggestions_suggestion_id_fkey"
+            columns: ["suggestion_id"]
+            isOneToOne: false
+            referencedRelation: "suggestions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reactions: {
+        Row: {
+          reactions_round_id: string
+          suggestion_id: string
+          user_id: string
+          score: number
+          created_at: string
+        }
+        Insert: {
+          reactions_round_id: string
+          suggestion_id: string
+          user_id: string
+          score: number
+          created_at?: string
+        }
+        Update: {
+          reactions_round_id?: string
+          suggestion_id?: string
+          user_id?: string
+          score?: number
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reactions_reactions_round_id_fkey"
+            columns: ["reactions_round_id"]
+            isOneToOne: false
+            referencedRelation: "reactions_rounds"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reactions_suggestion_id_fkey"
+            columns: ["suggestion_id"]
+            isOneToOne: false
+            referencedRelation: "suggestions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       trips: {
         Row: {
@@ -149,3 +260,6 @@ type Tables = Database["public"]["Tables"]
 export type Profile = Tables["profiles"]["Row"]
 export type Trip = Tables["trips"]["Row"]
 export type Suggestion = Tables["suggestions"]["Row"]
+export type ReactionsRound = Tables["reactions_rounds"]["Row"]
+export type ReactionsRoundSuggestion = Tables["reactions_round_suggestions"]["Row"]
+export type Reaction = Tables["reactions"]["Row"]
