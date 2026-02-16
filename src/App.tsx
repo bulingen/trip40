@@ -8,6 +8,12 @@ import { TripListView } from "./pages/TripListView";
 import { SuggestionDetailPage } from "./pages/SuggestionDetailPage";
 import { AddSuggestionPage } from "./pages/AddSuggestionPage";
 import { EditSuggestionPage } from "./pages/EditSuggestionPage";
+import { ReactionsRoundsPage } from "./pages/ReactionsRoundsPage";
+import { CreateReactionsRoundPage } from "./pages/CreateReactionsRoundPage";
+import { ReactionsRoundDetailPage } from "./pages/ReactionsRoundDetailPage";
+import { ReactionsVotingPage } from "./pages/ReactionsVotingPage";
+import { ReactionsResultsPage } from "./pages/ReactionsResultsPage";
+import { ReactionsResultsBreakdownPage } from "./pages/ReactionsResultsBreakdownPage";
 
 export function App() {
   return (
@@ -66,6 +72,54 @@ export function App() {
         element={
           <ProtectedRoute>
             <SuggestionDetailPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/trips/:id/reactions"
+        element={
+          <ProtectedRoute>
+            <ReactionsRoundsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/trips/:id/reactions/new"
+        element={
+          <ProtectedRoute>
+            <CreateReactionsRoundPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/trips/:id/reactions/:roundId"
+        element={
+          <ProtectedRoute>
+            <ReactionsRoundDetailPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/trips/:id/reactions/:roundId/suggestions/:suggestionId"
+        element={
+          <ProtectedRoute>
+            <ReactionsVotingPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/trips/:id/reactions/:roundId/results"
+        element={
+          <ProtectedRoute>
+            <ReactionsResultsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/trips/:id/reactions/:roundId/results/suggestions/:suggestionId"
+        element={
+          <ProtectedRoute>
+            <ReactionsResultsBreakdownPage />
           </ProtectedRoute>
         }
       />

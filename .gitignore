@@ -33,3 +33,5 @@ scripts/seed-prod.sql
 
 seed-data.md
 unsplash-images.txt
+
+.cursor/plans

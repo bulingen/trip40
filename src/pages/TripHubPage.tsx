@@ -12,6 +12,7 @@ export function TripHubPage() {
   const { id } = useParams<{ id: string }>();
   const [trip, setTrip] = useState<Trip | null>(null);
   const [loading, setLoading] = useState(true);
+  const [incompleteRoundsCount, setIncompleteRoundsCount] = useState<number | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -24,6 +25,47 @@ export function TripHubPage() {
         setTrip(data ?? null);
         setLoading(false);
       });
+  }, [id]);
+
+  useEffect(() => {
+    if (!id) return;
+    let cancelled = false;
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data: rounds } = await supabase
+        .from("reactions_rounds")
+        .select("id")
+        .eq("trip_id", id);
+      if (!rounds?.length || cancelled) {
+        setIncompleteRoundsCount(0);
+        return;
+      }
+      const roundIds = rounds.map((r) => r.id);
+      const [suggestionsRes, reactionsRes] = await Promise.all([
+        supabase.from("reactions_round_suggestions").select("reactions_round_id").in("reactions_round_id", roundIds),
+        supabase.from("reactions").select("reactions_round_id").in("reactions_round_id", roundIds).eq("user_id", user.id),
+      ]);
+      if (cancelled) return;
+      const suggestionCountByRound: Record<string, number> = {};
+      for (const r of suggestionsRes.data ?? []) {
+        suggestionCountByRound[r.reactions_round_id] = (suggestionCountByRound[r.reactions_round_id] ?? 0) + 1;
+      }
+      const myReactionCountByRound: Record<string, number> = {};
+      for (const r of reactionsRes.data ?? []) {
+        myReactionCountByRound[r.reactions_round_id] = (myReactionCountByRound[r.reactions_round_id] ?? 0) + 1;
+      }
+      let incomplete = 0;
+      for (const rid of roundIds) {
+        const need = suggestionCountByRound[rid] ?? 0;
+        const have = myReactionCountByRound[rid] ?? 0;
+        if (need > 0 && have < need) incomplete += 1;
+      }
+      setIncompleteRoundsCount(incomplete);
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [id]);
 
   if (loading) {
@@ -69,15 +111,23 @@ export function TripHubPage() {
         >
           List view
         </Link>
-        <div className="divider">Available soon</div>
+        <div className="divider">Games</div>
+        <Link
+          to={`/trips/${id}/reactions`}
+          className="btn btn-outline btn-primary btn-lg w-full justify-start gap-2 relative"
+        >
+          Play: Reactions
+          {typeof incompleteRoundsCount === "number" && incompleteRoundsCount > 0 && (
+            <span className="badge badge-primary badge-sm absolute top-2 right-2">
+              {incompleteRoundsCount}
+            </span>
+          )}
+        </Link>
         <button type="button" className="btn btn-lg w-full justify-start gap-2" disabled>
           Play: Swipe
         </button>
         <button type="button" className="btn btn-lg w-full justify-start gap-2" disabled>
           Play: Head 2 head
-        </button>
-        <button type="button" className="btn btn-lg w-full justify-start gap-2" disabled>
-          Play: Rate
         </button>
       </div>
     </div>
