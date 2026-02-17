@@ -142,32 +142,36 @@ export function ReactionsVotingPage() {
         </div>
 
         {round.is_open && (
-          <div className="flex flex-col gap-4">
-            <span className="label-text">Your reaction</span>
-            <div className="flex flex-col items-center gap-3">
-              {myScore !== null ? (
-                <img
-                  src={getReactionSvgPath(myScore)}
-                  alt=""
-                  className="w-24 h-24 shrink-0"
-                  aria-hidden
-                />
-              ) : (
-                <p className="text-base-content/60 text-sm">Please add your reaction</p>
-              )}
-              <div className="rating rating-lg gap-1">
-                {([1, 2, 3, 4, 5] as const).map((star) => (
-                  <input
-                    key={star}
-                    type="radio"
-                    name={`rating-${suggestionId}`}
-                    className="mask mask-star-2 bg-warning"
-                    aria-label={`${star} star`}
-                    checked={myScore === star}
-                    onChange={() => setReaction(star)}
-                    disabled={saving}
-                  />
-                ))}
+          <div className="flex flex-col gap-2">
+            <p className="text-base-content/50 text-xs uppercase tracking-wide">My reaction</p>
+            <div className="card bg-base-100 border border-base-300 rounded-xl shadow-sm">
+              <div className="card-body items-center gap-3 py-6">
+                <div className="min-h-[7rem] flex items-center justify-center">
+                  {myScore !== null ? (
+                    <img
+                      src={getReactionSvgPath(myScore)}
+                      alt=""
+                      className="w-24 h-24 object-contain shrink-0"
+                      aria-hidden
+                    />
+                  ) : (
+                    <p className="text-base-content/60 text-sm text-center px-2">Please add your reaction</p>
+                  )}
+                </div>
+                <div className="rating rating-lg gap-1">
+                  {([1, 2, 3, 4, 5] as const).map((star) => (
+                    <input
+                      key={star}
+                      type="radio"
+                      name={`rating-${suggestionId}`}
+                      className="mask mask-star-2 bg-warning"
+                      aria-label={`${star} star`}
+                      checked={myScore === star}
+                      onChange={() => setReaction(star)}
+                      disabled={saving}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -175,20 +179,20 @@ export function ReactionsVotingPage() {
 
         <div className="flex justify-between gap-2 pt-4">
           {prevId ? (
-            <Link to={`/trips/${tripId}/reactions/${roundId}/suggestions/${prevId}`} className="btn btn-outline">
+            <Link to={`/trips/${tripId}/reactions/${roundId}/suggestions/${prevId}`} className="btn btn-neutral btn-outline">
               Previous
             </Link>
           ) : (
-            <Link to={`/trips/${tripId}/reactions/${roundId}`} className="btn btn-ghost">
+            <Link to={`/trips/${tripId}/reactions/${roundId}`} className="btn btn-neutral btn-outline">
               Back to round
             </Link>
           )}
           {nextId ? (
-            <Link to={`/trips/${tripId}/reactions/${roundId}/suggestions/${nextId}`} className="btn btn-primary">
+            <Link to={`/trips/${tripId}/reactions/${roundId}/suggestions/${nextId}`} className="btn btn-primary btn-outline">
               Next
             </Link>
           ) : (
-            <Link to={`/trips/${tripId}/reactions/${roundId}`} className="btn btn-primary">
+            <Link to={`/trips/${tripId}/reactions/${roundId}`} className="btn btn-primary btn-outline">
               Done
             </Link>
           )}
