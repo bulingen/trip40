@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { LeftChevronIcon } from "../components/LeftChevronIcon";
+import { StarRatingDisplay } from "../components/StarRatingDisplay";
 import { getReactionSvgPath, roundAverageToNearestScore } from "../lib/reactions";
+import type { ReactionScore } from "../lib/reactions";
 import type { ReactionsRound } from "../lib/database.types";
 import type { Suggestion } from "../lib/database.types";
 
@@ -104,40 +106,48 @@ export function ReactionsResultsPage() {
           <thead>
             <tr>
               <th>Suggestion</th>
-              <th>Average</th>
-              <th>Votes</th>
+              <th>Score</th>
+              <th className="hidden sm:table-cell">Votes</th>
+              <th className="w-0" />
             </tr>
           </thead>
           <tbody>
             {rows.map((row) => {
               const roundedScore = roundAverageToNearestScore(row.average);
+              const detailsUrl = `/trips/${tripId}/reactions/${roundId}/results/suggestions/${row.suggestion.id}`;
               return (
                 <tr key={row.suggestion.id}>
                   <td>
-                    <Link
-                      to={`/trips/${tripId}/reactions/${roundId}/results/suggestions/${row.suggestion.id}`}
-                      className="link link-hover font-medium"
-                    >
-                      {row.suggestion.title}
-                    </Link>
+                    <span className="font-medium">{row.suggestion.title}</span>
                   </td>
                   <td>
-                    <span className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <StarRatingDisplay value={roundedScore} size="rating-sm" />
                       <span>{row.average.toFixed(1)}</span>
-                      <img src={getReactionSvgPath(roundedScore)} alt="" className="w-8 h-8" />
-                    </span>
+                    </div>
                   </td>
-                  <td>
+                  <td className="hidden sm:table-cell">
                     <div className="flex flex-wrap gap-1 items-center">
                       {row.reactions.map((r) => (
                         <img
                           key={r.user_id}
-                          src={getReactionSvgPath(r.score as -1 | 0 | 1 | 2)}
+                          src={getReactionSvgPath(r.score as ReactionScore)}
                           alt=""
                           className="w-8 h-8"
                         />
                       ))}
                     </div>
+                  </td>
+                  <td>
+                    <Link
+                      to={detailsUrl}
+                      className="btn btn-ghost btn-sm btn-square"
+                      aria-label="View details"
+                    >
+                      <span className="rotate-180 inline-block">
+                        <LeftChevronIcon />
+                      </span>
+                    </Link>
                   </td>
                 </tr>
               );

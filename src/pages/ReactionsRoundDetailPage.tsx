@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { LeftChevronIcon } from "../components/LeftChevronIcon";
+import { StarRatingDisplay } from "../components/StarRatingDisplay";
 import { getReactionSvgPath } from "../lib/reactions";
+import type { ReactionScore } from "../lib/reactions";
 import type { ReactionsRound } from "../lib/database.types";
 import type { Suggestion } from "../lib/database.types";
 
@@ -169,7 +171,10 @@ export function ReactionsRoundDetailPage() {
                 >
                   <span className="font-medium">{s.title}</span>
                   {voted ? (
-                    <img src={getReactionSvgPath(myScore as -1 | 0 | 1 | 2)} alt="" className="w-8 h-8 shrink-0" title="Your vote" />
+                    <span className="flex items-center gap-2 shrink-0" title="Your vote">
+                      <StarRatingDisplay value={myScore as ReactionScore} size="rating-sm" />
+                      <img src={getReactionSvgPath(myScore as ReactionScore)} alt="" className="w-8 h-8" />
+                    </span>
                   ) : (
                     <span className="text-xs opacity-50 shrink-0">Not rated</span>
                   )}

@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { LeftChevronIcon } from "../components/LeftChevronIcon";
-import { REACTION_SCORES, getReactionSvgPath, isValidReactionScore } from "../lib/reactions";
+import { getReactionSvgPath, isValidReactionScore } from "../lib/reactions";
+import type { ReactionScore } from "../lib/reactions";
 import type { ReactionsRound } from "../lib/database.types";
 import type { Suggestion } from "../lib/database.types";
 
@@ -39,7 +40,7 @@ export function ReactionsVotingPage() {
   const [round, setRound] = useState<ReactionsRound | null>(null);
   const [suggestion, setSuggestion] = useState<SuggestionWithProfile | null>(null);
   const [suggestionIds, setSuggestionIds] = useState<string[]>([]);
-  const [myScore, setMyScore] = useState<number | null>(null);
+  const [myScore, setMyScore] = useState<ReactionScore | null>(null);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -78,7 +79,7 @@ export function ReactionsVotingPage() {
     };
   }, [tripId, roundId, suggestionId]);
 
-  const setReaction = async (score: number) => {
+  const setReaction = async (score: ReactionScore) => {
     if (!roundId || !suggestionId || !round?.is_open) return;
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
@@ -135,47 +136,64 @@ export function ReactionsVotingPage() {
           {suggestion.main_image_url && (
             <SuggestionImage url={suggestion.main_image_url} className="rounded-lg object-cover max-h-48 w-full sm:max-w-[280px]" />
           )}
-          <div className="prose prose-sm max-w-none">
-            <p className="whitespace-pre-wrap">{suggestion.description || "—"}</p>
-          </div>
         </div>
 
         {round.is_open && (
           <div className="flex flex-col gap-2">
-            <span className="label-text">Your reaction</span>
-            <div className="flex flex-wrap gap-2">
-              {REACTION_SCORES.map((score) => (
-                <button
-                  key={score}
-                  type="button"
-                  className={`btn btn-circle flex items-center justify-center w-16 h-16 min-w-16 min-h-16 ${myScore === score ? "btn-primary" : "btn-outline"}`}
-                  onClick={() => setReaction(score)}
-                  disabled={saving}
-                  title={`Score ${score}`}
-                >
-                  <img src={getReactionSvgPath(score)} alt="" className="w-14 h-14" />
-                </button>
-              ))}
+            <p className="text-base-content/50 text-xs uppercase tracking-wide">My reaction</p>
+            <div className="card bg-base-100 border border-base-300 rounded-xl shadow-sm">
+              <div className="card-body items-center gap-3 py-6">
+                <div className="min-h-[7rem] flex items-center justify-center">
+                  {myScore !== null ? (
+                    <img
+                      src={getReactionSvgPath(myScore)}
+                      alt=""
+                      className="w-24 h-24 object-contain shrink-0"
+                      aria-hidden
+                    />
+                  ) : (
+                    <p className="text-base-content/60 text-sm text-center px-2">Please add your reaction</p>
+                  )}
+                </div>
+                <div className="rating rating-lg gap-1">
+                  {([1, 2, 3, 4, 5] as const).map((star) => (
+                    <input
+                      key={star}
+                      type="radio"
+                      name={`rating-${suggestionId}`}
+                      className="mask mask-star-2 bg-warning"
+                      aria-label={`${star} star`}
+                      checked={myScore === star}
+                      onChange={() => setReaction(star)}
+                      disabled={saving}
+                    />
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         )}
 
+        <div className="prose prose-sm max-w-none">
+          <p className="whitespace-pre-wrap">{suggestion.description || "—"}</p>
+        </div>
+
         <div className="flex justify-between gap-2 pt-4">
           {prevId ? (
-            <Link to={`/trips/${tripId}/reactions/${roundId}/suggestions/${prevId}`} className="btn btn-outline">
+            <Link to={`/trips/${tripId}/reactions/${roundId}/suggestions/${prevId}`} className="btn btn-neutral btn-outline">
               Previous
             </Link>
           ) : (
-            <Link to={`/trips/${tripId}/reactions/${roundId}`} className="btn btn-ghost">
+            <Link to={`/trips/${tripId}/reactions/${roundId}`} className="btn btn-neutral btn-outline">
               Back to round
             </Link>
           )}
           {nextId ? (
-            <Link to={`/trips/${tripId}/reactions/${roundId}/suggestions/${nextId}`} className="btn btn-primary">
+            <Link to={`/trips/${tripId}/reactions/${roundId}/suggestions/${nextId}`} className="btn btn-primary btn-outline">
               Next
             </Link>
           ) : (
-            <Link to={`/trips/${tripId}/reactions/${roundId}`} className="btn btn-primary">
+            <Link to={`/trips/${tripId}/reactions/${roundId}`} className="btn btn-primary btn-outline">
               Done
             </Link>
           )}

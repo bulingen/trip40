@@ -1,33 +1,33 @@
 /**
- * Play: Reactions — score scale -1 to +2.
+ * Play: Reactions — 1–5 star rating with emojis.
  * Uses Twemoji SVGs (https://github.com/twitter/twemoji) via jsDelivr CDN.
- * -1: face screaming in fear, 0: handshake, 1: smiling face with smiling eyes, 2: heart
+ * 1: screaming, 2: thinking, 3: slightly smiling, 4: smiling with smiling eyes, 5: heart eyes
  */
 
-export const REACTION_SCORES = [-1, 0, 1, 2] as const;
+export const REACTION_SCORES = [1, 2, 3, 4, 5] as const;
 export type ReactionScore = (typeof REACTION_SCORES)[number];
 
 const TWEMOJI_CDN = "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg";
-// Twemoji filenames are lowercase hex: 1f631 screaming, 1f91d handshake, 1f604 smiling, 2764 heart
-const TWEMOJI_URLS = [
-  `${TWEMOJI_CDN}/1f631.svg`,  // -1 face screaming in fear
-  `${TWEMOJI_CDN}/1f91d.svg`,  // 0 handshake
-  `${TWEMOJI_CDN}/1f604.svg`,  // 1 smiling face with smiling eyes
-  `${TWEMOJI_CDN}/2764.svg`,   // 2 heart
-];
+const TWEMOJI_URLS: Record<ReactionScore, string> = {
+  1: `${TWEMOJI_CDN}/1f631.svg`,  // face screaming in fear
+  2: `${TWEMOJI_CDN}/1f914.svg`,  // thinking face
+  3: `${TWEMOJI_CDN}/1f642.svg`,  // slightly smiling face
+  4: `${TWEMOJI_CDN}/1f60a.svg`,  // smiling face with smiling eyes
+  5: `${TWEMOJI_CDN}/1f60d.svg`,  // heart eyes
+};
 
 export function getReactionSvgPath(score: ReactionScore): string {
-  return TWEMOJI_URLS[score + 1];
+  return TWEMOJI_URLS[score];
 }
 
-/** Round an average (e.g. 1.2) to the nearest valid reaction score for display. */
+/** Round an average (e.g. 3.4) to the nearest 1–5 for display. */
 export function roundAverageToNearestScore(average: number): ReactionScore {
-  if (average <= -0.5) return -1;
-  if (average < 0.5) return 0;
-  if (average < 1.5) return 1;
-  return 2;
+  const n = Math.round(average);
+  if (n <= 1) return 1;
+  if (n >= 5) return 5;
+  return n as ReactionScore;
 }
 
 export function isValidReactionScore(n: number): n is ReactionScore {
-  return REACTION_SCORES.includes(n as ReactionScore);
+  return Number.isInteger(n) && n >= 1 && n <= 5;
 }
