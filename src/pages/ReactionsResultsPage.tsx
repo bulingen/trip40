@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { LeftChevronIcon } from "../components/LeftChevronIcon";
+import { StarRatingDisplay } from "../components/StarRatingDisplay";
 import { getReactionSvgPath, roundAverageToNearestScore } from "../lib/reactions";
 import type { ReactionsRound } from "../lib/database.types";
 import type { Suggestion } from "../lib/database.types";
@@ -104,8 +105,8 @@ export function ReactionsResultsPage() {
           <thead>
             <tr>
               <th>Suggestion</th>
-              <th>Average</th>
-              <th>Votes</th>
+              <th>Score</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -122,22 +123,13 @@ export function ReactionsResultsPage() {
                     </Link>
                   </td>
                   <td>
-                    <span className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <StarRatingDisplay value={roundedScore} size="rating-sm" />
                       <span>{row.average.toFixed(1)}</span>
-                      <img src={getReactionSvgPath(roundedScore)} alt="" className="w-8 h-8" />
-                    </span>
+                    </div>
                   </td>
                   <td>
-                    <div className="flex flex-wrap gap-1 items-center">
-                      {row.reactions.map((r) => (
-                        <img
-                          key={r.user_id}
-                          src={getReactionSvgPath(r.score as -1 | 0 | 1 | 2)}
-                          alt=""
-                          className="w-8 h-8"
-                        />
-                      ))}
-                    </div>
+                    <img src={getReactionSvgPath(roundedScore)} alt="" className="w-8 h-8" />
                   </td>
                 </tr>
               );

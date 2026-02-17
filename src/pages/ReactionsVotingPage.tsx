@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { LeftChevronIcon } from "../components/LeftChevronIcon";
-import { REACTION_SCORES, getReactionSvgPath, isValidReactionScore } from "../lib/reactions";
+import { getReactionSvgPath, isValidReactionScore } from "../lib/reactions";
+import type { ReactionScore } from "../lib/reactions";
 import type { ReactionsRound } from "../lib/database.types";
 import type { Suggestion } from "../lib/database.types";
 
@@ -39,7 +40,8 @@ export function ReactionsVotingPage() {
   const [round, setRound] = useState<ReactionsRound | null>(null);
   const [suggestion, setSuggestion] = useState<SuggestionWithProfile | null>(null);
   const [suggestionIds, setSuggestionIds] = useState<string[]>([]);
-  const [myScore, setMyScore] = useState<number | null>(null);
+  const [myScore, setMyScore] = useState<ReactionScore | null>(null);
+  const [hoverScore, setHoverScore] = useState<ReactionScore | null>(null);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -78,7 +80,7 @@ export function ReactionsVotingPage() {
     };
   }, [tripId, roundId, suggestionId]);
 
-  const setReaction = async (score: number) => {
+  const setReaction = async (score: ReactionScore) => {
     if (!roundId || !suggestionId || !round?.is_open) return;
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
@@ -90,6 +92,8 @@ export function ReactionsVotingPage() {
     setSaving(false);
     setMyScore(score);
   };
+
+  const displayScore: ReactionScore = hoverScore ?? myScore ?? 3;
 
   const idx = suggestionIds.indexOf(suggestionId ?? "");
   const prevId = idx > 0 ? suggestionIds[idx - 1] : null;
@@ -141,21 +145,33 @@ export function ReactionsVotingPage() {
         </div>
 
         {round.is_open && (
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-4">
             <span className="label-text">Your reaction</span>
-            <div className="flex flex-wrap gap-2">
-              {REACTION_SCORES.map((score) => (
-                <button
-                  key={score}
-                  type="button"
-                  className={`btn btn-circle flex items-center justify-center w-16 h-16 min-w-16 min-h-16 ${myScore === score ? "btn-primary" : "btn-outline"}`}
-                  onClick={() => setReaction(score)}
-                  disabled={saving}
-                  title={`Score ${score}`}
-                >
-                  <img src={getReactionSvgPath(score)} alt="" className="w-14 h-14" />
-                </button>
-              ))}
+            <div className="flex flex-col items-center gap-3">
+              <img
+                src={getReactionSvgPath(displayScore)}
+                alt=""
+                className="w-24 h-24 shrink-0"
+                aria-hidden
+              />
+              <div
+                className="rating rating-lg gap-1"
+                onMouseLeave={() => setHoverScore(null)}
+              >
+                {([1, 2, 3, 4, 5] as const).map((star) => (
+                  <input
+                    key={star}
+                    type="radio"
+                    name={`rating-${suggestionId}`}
+                    className="mask mask-star-2 bg-warning"
+                    aria-label={`${star} star`}
+                    checked={myScore === star}
+                    onChange={() => setReaction(star)}
+                    onMouseEnter={() => setHoverScore(star)}
+                    disabled={saving}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         )}

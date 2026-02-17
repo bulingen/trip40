@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { LeftChevronIcon } from "../components/LeftChevronIcon";
+import { StarRatingDisplay } from "../components/StarRatingDisplay";
 import { getReactionSvgPath } from "../lib/reactions";
+import type { ReactionScore } from "../lib/reactions";
 import type { Suggestion } from "../lib/database.types";
 
 interface Trip {
@@ -116,8 +118,8 @@ export function ReactionsResultsBreakdownPage() {
             {reactions.map((r) => (
               <li key={r.user_id} className="flex items-center gap-3 p-2 rounded-lg bg-base-100 border border-base-300">
                 <span className="font-medium">{r.display_name ?? "Unknown"}</span>
-                <img src={getReactionSvgPath(r.score as -1 | 0 | 1 | 2)} alt="" className="w-10 h-10" />
-                <span className="text-sm opacity-70">({r.score})</span>
+                <StarRatingDisplay value={r.score as ReactionScore} size="rating-sm" />
+                <img src={getReactionSvgPath(r.score as ReactionScore)} alt="" className="w-10 h-10" />
               </li>
             ))}
           </ul>
