@@ -12,7 +12,7 @@ const TWEMOJI_URLS: Record<ReactionScore, string> = {
   1: `${TWEMOJI_CDN}/1f631.svg`,  // face screaming in fear
   2: `${TWEMOJI_CDN}/1f914.svg`,  // thinking face
   3: `${TWEMOJI_CDN}/1f642.svg`,  // slightly smiling face
-  4: `${TWEMOJI_CDN}/1f604.svg`,  // smiling face with smiling eyes
+  4: `${TWEMOJI_CDN}/1f60a.svg`,  // smiling face with smiling eyes
   5: `${TWEMOJI_CDN}/1f60d.svg`,  // heart eyes
 };
 

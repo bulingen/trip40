@@ -136,9 +136,6 @@ export function ReactionsVotingPage() {
           {suggestion.main_image_url && (
             <SuggestionImage url={suggestion.main_image_url} className="rounded-lg object-cover max-h-48 w-full sm:max-w-[280px]" />
           )}
-          <div className="prose prose-sm max-w-none">
-            <p className="whitespace-pre-wrap">{suggestion.description || "—"}</p>
-          </div>
         </div>
 
         {round.is_open && (
@@ -176,6 +173,10 @@ export function ReactionsVotingPage() {
             </div>
           </div>
         )}
+
+        <div className="prose prose-sm max-w-none">
+          <p className="whitespace-pre-wrap">{suggestion.description || "—"}</p>
+        </div>
 
         <div className="flex justify-between gap-2 pt-4">
           {prevId ? (
