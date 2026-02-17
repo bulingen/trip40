@@ -107,21 +107,18 @@ export function ReactionsResultsPage() {
             <tr>
               <th>Suggestion</th>
               <th>Score</th>
-              <th>Votes</th>
+              <th className="hidden sm:table-cell">Votes</th>
+              <th className="w-0" />
             </tr>
           </thead>
           <tbody>
             {rows.map((row) => {
               const roundedScore = roundAverageToNearestScore(row.average);
+              const detailsUrl = `/trips/${tripId}/reactions/${roundId}/results/suggestions/${row.suggestion.id}`;
               return (
                 <tr key={row.suggestion.id}>
                   <td>
-                    <Link
-                      to={`/trips/${tripId}/reactions/${roundId}/results/suggestions/${row.suggestion.id}`}
-                      className="link link-hover font-medium"
-                    >
-                      {row.suggestion.title}
-                    </Link>
+                    <span className="font-medium">{row.suggestion.title}</span>
                   </td>
                   <td>
                     <div className="flex items-center gap-2 flex-wrap">
@@ -129,7 +126,7 @@ export function ReactionsResultsPage() {
                       <span>{row.average.toFixed(1)}</span>
                     </div>
                   </td>
-                  <td>
+                  <td className="hidden sm:table-cell">
                     <div className="flex flex-wrap gap-1 items-center">
                       {row.reactions.map((r) => (
                         <img
@@ -140,6 +137,17 @@ export function ReactionsResultsPage() {
                         />
                       ))}
                     </div>
+                  </td>
+                  <td>
+                    <Link
+                      to={detailsUrl}
+                      className="btn btn-ghost btn-sm btn-square"
+                      aria-label="View details"
+                    >
+                      <span className="rotate-180 inline-block">
+                        <LeftChevronIcon />
+                      </span>
+                    </Link>
                   </td>
                 </tr>
               );
