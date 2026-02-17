@@ -116,10 +116,12 @@ export function ReactionsResultsBreakdownPage() {
           <h3 className="font-semibold mb-2">Scores</h3>
           <ul className="flex flex-col gap-2">
             {reactions.map((r) => (
-              <li key={r.user_id} className="flex items-center gap-3 p-2 rounded-lg bg-base-100 border border-base-300">
+              <li key={r.user_id} className="flex items-center justify-between gap-3 p-2 rounded-lg bg-base-100 border border-base-300">
                 <span className="font-medium">{r.display_name ?? "Unknown"}</span>
-                <StarRatingDisplay value={r.score as ReactionScore} size="rating-sm" />
-                <img src={getReactionSvgPath(r.score as ReactionScore)} alt="" className="w-10 h-10" />
+                <span className="flex items-center gap-2 shrink-0">
+                  <StarRatingDisplay value={r.score as ReactionScore} size="rating-sm" />
+                  <img src={getReactionSvgPath(r.score as ReactionScore)} alt="" className="w-10 h-10" />
+                </span>
               </li>
             ))}
           </ul>

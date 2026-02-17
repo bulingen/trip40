@@ -4,6 +4,7 @@ import { supabase } from "../lib/supabase";
 import { LeftChevronIcon } from "../components/LeftChevronIcon";
 import { StarRatingDisplay } from "../components/StarRatingDisplay";
 import { getReactionSvgPath, roundAverageToNearestScore } from "../lib/reactions";
+import type { ReactionScore } from "../lib/reactions";
 import type { ReactionsRound } from "../lib/database.types";
 import type { Suggestion } from "../lib/database.types";
 
@@ -106,7 +107,7 @@ export function ReactionsResultsPage() {
             <tr>
               <th>Suggestion</th>
               <th>Score</th>
-              <th></th>
+              <th>Votes</th>
             </tr>
           </thead>
           <tbody>
@@ -129,7 +130,16 @@ export function ReactionsResultsPage() {
                     </div>
                   </td>
                   <td>
-                    <img src={getReactionSvgPath(roundedScore)} alt="" className="w-8 h-8" />
+                    <div className="flex flex-wrap gap-1 items-center">
+                      {row.reactions.map((r) => (
+                        <img
+                          key={r.user_id}
+                          src={getReactionSvgPath(r.score as ReactionScore)}
+                          alt=""
+                          className="w-8 h-8"
+                        />
+                      ))}
+                    </div>
                   </td>
                 </tr>
               );
