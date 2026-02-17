@@ -41,7 +41,6 @@ export function ReactionsVotingPage() {
   const [suggestion, setSuggestion] = useState<SuggestionWithProfile | null>(null);
   const [suggestionIds, setSuggestionIds] = useState<string[]>([]);
   const [myScore, setMyScore] = useState<ReactionScore | null>(null);
-  const [hoverScore, setHoverScore] = useState<ReactionScore | null>(null);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -92,8 +91,6 @@ export function ReactionsVotingPage() {
     setSaving(false);
     setMyScore(score);
   };
-
-  const displayScore: ReactionScore = hoverScore ?? myScore ?? 3;
 
   const idx = suggestionIds.indexOf(suggestionId ?? "");
   const prevId = idx > 0 ? suggestionIds[idx - 1] : null;
@@ -148,16 +145,17 @@ export function ReactionsVotingPage() {
           <div className="flex flex-col gap-4">
             <span className="label-text">Your reaction</span>
             <div className="flex flex-col items-center gap-3">
-              <img
-                src={getReactionSvgPath(displayScore)}
-                alt=""
-                className="w-24 h-24 shrink-0"
-                aria-hidden
-              />
-              <div
-                className="rating rating-lg gap-1"
-                onMouseLeave={() => setHoverScore(null)}
-              >
+              {myScore !== null ? (
+                <img
+                  src={getReactionSvgPath(myScore)}
+                  alt=""
+                  className="w-24 h-24 shrink-0"
+                  aria-hidden
+                />
+              ) : (
+                <p className="text-base-content/60 text-sm">Please add your reaction</p>
+              )}
+              <div className="rating rating-lg gap-1">
                 {([1, 2, 3, 4, 5] as const).map((star) => (
                   <input
                     key={star}
@@ -167,7 +165,6 @@ export function ReactionsVotingPage() {
                     aria-label={`${star} star`}
                     checked={myScore === star}
                     onChange={() => setReaction(star)}
-                    onMouseEnter={() => setHoverScore(star)}
                     disabled={saving}
                   />
                 ))}
